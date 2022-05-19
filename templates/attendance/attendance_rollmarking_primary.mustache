@@ -1,0 +1,73 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+
+@package block_attendance_report
+@copyright 2021 Veronica Bermegui
+@license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+}}
+
+<table>
+  <tr>
+    <td class="att-mark-absent">{{#str}} markedabset, block_attendance_report{{/str}}</td>
+    <td class="att-mark-present">{{#str}} markedpresent, block_attendance_report{{/str}}</td>
+    <td class="att-norolltaken">{{#str}} norolltaken, block_attendance_report{{/str}}</td>
+    <td class="att-mark-exc">{{#str}} studentexcursion, block_attendance_report{{/str}}</td>
+  </tr>  
+</table>
+<br>
+<div class="clarification">
+  <i>{{#str}} clarification, block_attendance_report{{/str}}</i>
+</div>
+<br>
+
+<table id="rollmarking-primary" class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Attendance Date</th>    
+      <th colspan ="9" >Sessions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td></td>
+      <td colspan="3"> 1-2</td>
+      <td colspan="2"> 3-4</td>
+      <td colspan="3"> 5-6</td>
+    </tr>
+    
+      {{#days}}
+      {{#months}}
+      {{#details}}
+      {{#det}}
+    <tr>
+      <td>{{attendancedate}}</td>
+      {{#classdescription}}
+      {{#descriptions}}
+      {{#attendedflag}} <td class="att-mark-present" ></td> {{/attendedflag}}
+      {{^rolltaken}}<td class="att-norolltaken"></td> {{/rolltaken}}
+      {{#rolltaken}}{{^attendedflag}}{{^absencertypecode}}<td class="att-mark-absent"></td>{{/absencertypecode}}{{/attendedflag}} {{/rolltaken}}
+      {{#rolltaken}}{{^attendedflag}}{{#absencertypecode}}<td class="att-mark-exc"></td>{{/absencertypecode}}{{/attendedflag}} {{/rolltaken}}
+      {{/descriptions}}    
+    {{/classdescription}}   
+    </tr>
+    {{/det}}
+    {{/details}}
+    {{/months}} 
+    {{/days}}
+  </tbody>
+</table>

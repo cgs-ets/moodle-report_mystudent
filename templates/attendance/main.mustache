@@ -1,0 +1,74 @@
+
+
+{{!
+This file is part of Moodle - http://moodle.org/
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+@package report_mystudent
+@copyright 2022 Veronica Bermegui
+@license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+}}
+<div class = "cgs-dashboard-attendance-container">
+   <div class = "cgs-dashboard-attendance-by-term-container">
+      <h2>{{#str}} attendancebyterm, report_mystudent {{/str}}</h2>
+      <br>
+      {{^notermdata}}
+      {{> report_mystudent/attendance/attendance_by_term}}
+      {{/notermdata}}
+      {{#noclassesdata}}    
+      {{> report_mystudent/attendance/attendance_no_data}}
+      {{/noclassesdata}}
+      </div
+      <br>
+      <div class = "cgs-dashboard-attendance-by-class-container">
+         <h2>{{#str}} attendancebyclassforterm, report_mystudent {{/str}}</h2>
+         <br>
+         {{^noclassesdata}}
+         {{> report_mystudent/attendance/attendance_by_class}}
+         {{/noclassesdata}}
+         {{#noclassesdata}}    
+         {{> report_mystudent/attendance/attendance_no_data}}
+         {{/noclassesdata}}
+      </div>
+      <br>
+   </div>
+</div>
+
+{{^hidelink}}
+{{^isparent}}
+    <div id="rollmarking-container"  data-username="{{username}}"  data-campus ='{{campus}}'>
+    
+    <a href="#" data-toggle="collapse" data-target="#attendance-based-on-rollmarking"
+        aria-expanded="false" aria-controls="attendance-based-on-rollmarking"
+        class="attendance-rollmarking">
+        <div class="badge-actions"></div>
+        <span class="badge-name">{{#str}} attbasedonrollmarkinglink, report_mystudent{{/str}} </span>
+        <span id="attendance-based-on-rollmarking-hide"
+            class="fa fa-caret-right badge-name"></span>
+        <span id="attendance-based-on-rollmarking-show" class="fa fa-caret-down badge-name"></span>
+    </a>
+        <div class='collapse ' id="attendance-based-on-rollmarking">
+        <br>
+        <div data-region="attendance-rollmarking"></div>
+        <div class='spinner-border  text-primary' id="attendance-based-on-rollmarking-table" hidden>
+                <span class="sr-only">Loading...</span>
+        </div>
+        </div>
+    </div>
+{{/isparent}}
+{{/hidelink}}
+
+{{#js}}
+require(['report_mystudent/attendance'], function(Attendance) {
+    Attendance.init();
+});
+{{/js}}

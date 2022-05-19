@@ -1,0 +1,269 @@
+.cgs-dashboard-container {
+    margin: 20px;
+    display: flex;
+    gap: 1rem;
+
+    // justify-items: center;
+    @media only screen and (max-width: 900px) {
+        flex-wrap: wrap;
+    }
+
+    .dash-area {
+        border: 1px solid;
+        border-radius: 14px;
+        -webkit-box-shadow: 5px 5px 15px 5px #000000;
+        box-shadow: 5px 5px 15px 5px #000;
+        cursor: pointer;
+        text-align: center;
+        width: 100%;
+
+        img {
+            width: 12rem;
+            vertical-align: inherit;
+        }
+
+    }
+}
+
+/* Attendance Report */
+
+.cgs-dashboard-attendance-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 350px;
+    text-align: center;
+
+    tr th,
+    tr td {
+        border-right: 1px solid #66A8D8;
+        border-bottom: 1px solid #66A8D8;
+        padding: 5px;
+    }
+
+    tr th:first-child,
+    tr td:first-child {
+        border-left: 1px solid #66A8D8;
+    }
+
+    tr th {
+        background: #66A8D8;
+        border-top: 1px solid #66A8D8;
+        text-align: center;
+        color: white;
+    }
+
+    /* top-left border-radius */
+    tr:first-child th:first-child {
+        border-top-left-radius: 6px;
+    }
+
+    /* top-right border-radius */
+    tr:first-child th:last-child {
+        border-top-right-radius: 6px;
+    }
+
+    /* bottom-left border-radius */
+    tr:last-child td:first-child {
+        border-bottom-left-radius: 6px;
+    }
+
+    /* bottom-right border-radius */
+    tr:last-child td:last-child {
+        border-bottom-right-radius: 6px;
+    }
+
+    th {
+        font-size: 1.1rem;
+    }
+}
+
+.cgs-dashboard-attendance-container {
+    display: flex;
+    margin-bottom: 2rem;
+    align-content: flex-end;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 2rem;
+    text-align: center;
+    justify-content: space-around;
+}
+
+.attbyterm {
+    margin-top: 10px;
+    max-width: 25%;
+}
+
+.att-norolltaken {
+    background-color: rgba(219, 215, 215, 0.856);
+}
+
+.att-ild {
+    background-color: #f0e68c;
+}
+
+.att-mark-absent {
+    background-color: #ffb6c1;
+}
+
+.att-mark-present {
+    background-color: #d9f6d9;
+}
+
+td.att-mark-exc {
+    background-color: #66a8d8;
+}
+
+.att-health-clinic {
+    background-color: #b0e0e6;
+}
+
+.att-student-hub {
+    background-color: #e9967a;
+}
+
+.att-excursion {
+    background-color: #a9a9a9;
+}
+
+.att-late {
+    color: red;
+    font-weight: bold;
+}
+
+.clarification {
+    text-align: left;
+}
+
+table#rollmarking-primary {
+    font-weight: bold;
+    width: 50%;
+}
+
+span#attendance-based-on-rollmarking-show {
+    display: none;
+}
+
+@media only screen and (max-width: 900px) {
+    table.att-by-class {
+        width: 100%;
+    }
+
+}
+
+// Grades and effort.
+
+.graph-containers {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+}
+
+.chart-container {
+    position: relative;
+    width: 50vw;
+
+    @media (max-width: 926px) {
+        height: 40vh;
+        width: 95vw
+    }
+}
+
+// NAPLAN
+
+.cgs-dashboard-naplan-container {
+
+    @extend .graph-containers;
+
+    img {
+        max-width: 60%;
+
+        @media (max-width: 926px) {
+            max-width: 100%;
+        }
+    }
+
+    .chart-container {
+        position: relative;
+        width: 50vw;
+
+        @media (max-width: 926px) {
+            height: 40vh;
+            width: 95vw
+        }
+    }
+}
+
+a.chart-action {
+    transition: background .25s, border-color .25s;
+    background: rgba(40, 44, 52, .05);
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: #3080d0;
+    text-decoration: none;
+    display: inline-block;
+    font-size: .8rem;
+    padding: 8px 16px;
+    margin: 0 8px 8px 0;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+// Grades and effort
+
+.cgs-dashboard-gandef-container {
+    @extend .graph-containers;
+
+    #performance {
+        position: relative;
+        width: 50vw;
+        height: 60vh;
+
+        @media (max-width: 926px) {
+            height: 40vh;
+            width: 95vw
+        }
+    }
+
+    .grade-effort-tables-container {
+        width: 80%;
+    }
+}
+
+.cgs-dashboard-gandeffort-table {
+    @extend .cgs-dashboard-attendance-table;
+    width: 100%;
+}
+
+
+
+span#history-show {
+    display: none;
+}
+
+span#effort-show {
+    display: none;
+}
+
+td.area-heading {
+    background-color: #66A8D8;
+}
+
+td.assess-heading {
+    text-align: right;
+}
+
+tr.reports-heading {
+    text-align: center;
+    background-color: lightgrey;
+}
+
+
+/*<a href="https://www.flaticon.com/free-icons/attendance" title="attendance icons">Attendance icons created by Flat Icons - Flaticon</a>*/
+/* <a href="https://www.flaticon.com/free-icons/grade" title="grade icons">Grade icons created by Smashicons - Flaticon</a> */
+/* <a href="https://www.flaticon.com/free-icons/school" title="school icons">School icons created by Freepik - Flaticon</a> */
+/* <a href="https://www.flaticon.com/free-icons/grade" title="grade icons">Grade icons created by Freepik - Flaticon</a> */

@@ -1,0 +1,11 @@
+{{#performance}}
+<div id="performance" data-performance="{{performance}}">
+    <canvas id="trendChart"><p>The graph cannot be displayed. Please try later</p></canvas>
+</div>
+{{/performance}}
+
+{{^performance}}
+<div id="performance" data-performance="{{performance}}">
+    <p>Trend Data not available</p>
+</div>
+{{/performance}}

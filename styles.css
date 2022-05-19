@@ -1,0 +1,279 @@
+.cgs-dashboard-container {
+  margin: 20px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 1rem;
+}
+
+@media only screen and (max-width: 900px) {
+  .cgs-dashboard-container {
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+  }
+}
+
+.cgs-dashboard-container .dash-area {
+  border: 1px solid;
+  border-radius: 14px;
+  -webkit-box-shadow: 5px 5px 15px 5px #000000;
+  box-shadow: 5px 5px 15px 5px #000;
+  cursor: pointer;
+  text-align: center;
+  width: 100%;
+}
+
+.cgs-dashboard-container .dash-area img {
+  width: 12rem;
+  vertical-align: inherit;
+}
+
+/* Attendance Report */
+.cgs-dashboard-attendance-table, .cgs-dashboard-gandeffort-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 350px;
+  text-align: center;
+  /* top-left border-radius */
+  /* top-right border-radius */
+  /* bottom-left border-radius */
+  /* bottom-right border-radius */
+}
+
+.cgs-dashboard-attendance-table tr th, .cgs-dashboard-gandeffort-table tr th,
+.cgs-dashboard-attendance-table tr td,
+.cgs-dashboard-gandeffort-table tr td {
+  border-right: 1px solid #66A8D8;
+  border-bottom: 1px solid #66A8D8;
+  padding: 5px;
+}
+
+.cgs-dashboard-attendance-table tr th:first-child, .cgs-dashboard-gandeffort-table tr th:first-child,
+.cgs-dashboard-attendance-table tr td:first-child,
+.cgs-dashboard-gandeffort-table tr td:first-child {
+  border-left: 1px solid #66A8D8;
+}
+
+.cgs-dashboard-attendance-table tr th, .cgs-dashboard-gandeffort-table tr th {
+  background: #66A8D8;
+  border-top: 1px solid #66A8D8;
+  text-align: center;
+  color: white;
+}
+
+.cgs-dashboard-attendance-table tr:first-child th:first-child, .cgs-dashboard-gandeffort-table tr:first-child th:first-child {
+  border-top-left-radius: 6px;
+}
+
+.cgs-dashboard-attendance-table tr:first-child th:last-child, .cgs-dashboard-gandeffort-table tr:first-child th:last-child {
+  border-top-right-radius: 6px;
+}
+
+.cgs-dashboard-attendance-table tr:last-child td:first-child, .cgs-dashboard-gandeffort-table tr:last-child td:first-child {
+  border-bottom-left-radius: 6px;
+}
+
+.cgs-dashboard-attendance-table tr:last-child td:last-child, .cgs-dashboard-gandeffort-table tr:last-child td:last-child {
+  border-bottom-right-radius: 6px;
+}
+
+.cgs-dashboard-attendance-table th, .cgs-dashboard-gandeffort-table th {
+  font-size: 1.1rem;
+}
+
+.cgs-dashboard-attendance-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-bottom: 2rem;
+  -ms-flex-line-pack: end;
+      align-content: flex-end;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  gap: 2rem;
+  text-align: center;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+}
+
+.attbyterm {
+  margin-top: 10px;
+  max-width: 25%;
+}
+
+.att-norolltaken {
+  background-color: rgba(219, 215, 215, 0.856);
+}
+
+.att-ild {
+  background-color: #f0e68c;
+}
+
+.att-mark-absent {
+  background-color: #ffb6c1;
+}
+
+.att-mark-present {
+  background-color: #d9f6d9;
+}
+
+td.att-mark-exc {
+  background-color: #66a8d8;
+}
+
+.att-health-clinic {
+  background-color: #b0e0e6;
+}
+
+.att-student-hub {
+  background-color: #e9967a;
+}
+
+.att-excursion {
+  background-color: #a9a9a9;
+}
+
+.att-late {
+  color: red;
+  font-weight: bold;
+}
+
+.clarification {
+  text-align: left;
+}
+
+table#rollmarking-primary {
+  font-weight: bold;
+  width: 50%;
+}
+
+span#attendance-based-on-rollmarking-show {
+  display: none;
+}
+
+@media only screen and (max-width: 900px) {
+  table.att-by-class {
+    width: 100%;
+  }
+}
+
+.graph-containers, .cgs-dashboard-naplan-container, .cgs-dashboard-gandef-container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.chart-container {
+  position: relative;
+  width: 50vw;
+}
+
+@media (max-width: 926px) {
+  .chart-container {
+    height: 40vh;
+    width: 95vw;
+  }
+}
+
+.cgs-dashboard-naplan-container img {
+  max-width: 60%;
+}
+
+@media (max-width: 926px) {
+  .cgs-dashboard-naplan-container img {
+    max-width: 100%;
+  }
+}
+
+.cgs-dashboard-naplan-container .chart-container {
+  position: relative;
+  width: 50vw;
+}
+
+@media (max-width: 926px) {
+  .cgs-dashboard-naplan-container .chart-container {
+    height: 40vh;
+    width: 95vw;
+  }
+}
+
+a.chart-action {
+  -webkit-transition: background .25s, border-color .25s;
+  transition: background .25s, border-color .25s;
+  background: rgba(40, 44, 52, 0.05);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #3080d0;
+  text-decoration: none;
+  display: inline-block;
+  font-size: .8rem;
+  padding: 8px 16px;
+  margin: 0 8px 8px 0;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+}
+
+.cgs-dashboard-gandef-container #performance {
+  position: relative;
+  width: 50vw;
+  height: 60vh;
+}
+
+@media (max-width: 926px) {
+  .cgs-dashboard-gandef-container #performance {
+    height: 40vh;
+    width: 95vw;
+  }
+}
+
+.cgs-dashboard-gandef-container .grade-effort-tables-container {
+  width: 80%;
+}
+
+.cgs-dashboard-gandeffort-table {
+  width: 100%;
+}
+
+span#history-show {
+  display: none;
+}
+
+span#effort-show {
+  display: none;
+}
+
+td.area-heading {
+  background-color: #66A8D8;
+}
+
+td.assess-heading {
+  text-align: right;
+}
+
+tr.reports-heading {
+  text-align: center;
+  background-color: lightgrey;
+}
+
+/*<a href="https://www.flaticon.com/free-icons/attendance" title="attendance icons">Attendance icons created by Flat Icons - Flaticon</a>*/
+/* <a href="https://www.flaticon.com/free-icons/grade" title="grade icons">Grade icons created by Smashicons - Flaticon</a> */
+/* <a href="https://www.flaticon.com/free-icons/school" title="school icons">School icons created by Freepik - Flaticon</a> */
+/* <a href="https://www.flaticon.com/free-icons/grade" title="grade icons">Grade icons created by Freepik - Flaticon</a> */
+/*# sourceMappingURL=styles.css.map */
