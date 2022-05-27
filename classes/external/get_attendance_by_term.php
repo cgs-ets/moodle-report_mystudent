@@ -1,0 +1,87 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ *  Web service to get grade history/effort data.
+ *
+ * @package   report_mystudent
+ * @category
+ * @copyright 2022 Veronica Bermegui
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace report_mystudent\external;
+
+defined('MOODLE_INTERNAL') || die();
+
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+
+use function report_mystudent\attendance\get_attendance_by_term_structure;
+
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . '/report/mystudent/classes/attendancemanager.php');
+/**
+ * Trait implementing the external function block_grades_effort_report
+ */
+trait get_attendance_by_term {
+
+    /**
+     * Returns description of method parameters
+     * @return external_function_parameters
+     */
+
+    public static  function get_attendance_by_term_parameters() {
+        return new external_function_parameters(
+            array(
+                'userid' => new external_value(PARAM_RAW, 'student userid'),
+                'campus' => new external_value(PARAM_RAW, 'student campus'),
+            )
+        );
+    }
+
+    /**
+     * Return context.
+     */
+    public static function get_attendance_by_term($userid, $campus) {
+        global $USER, $DB;
+
+        $context = \context_user::instance($USER->id);
+
+        self::validate_context($context);
+        //Parameters validation
+        self::validate_parameters(self::get_attendance_by_term_parameters(), array('userid' => $userid, 'campus' => $campus));
+
+        // Get the context for the grade history table template.
+        $profileuser = $DB->get_record('user', ['id' =>$userid]);
+        $data = get_attendance_by_term_structure($profileuser);
+
+        return array(
+            'result' => json_encode($data),
+        );
+    }
+
+    /**
+     * Describes the structure of the function return value.
+     * @return external_single_structures
+     */
+    public static function get_attendance_by_term_returns() {
+        return new external_single_structure(array(
+            'result' =>  new external_value(PARAM_RAW, 'JSON with the info to display in the graph'),
+        ));
+    }
+}

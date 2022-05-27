@@ -13,61 +13,92 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @package   report_mystudent
- * @copyright 2022 Veronica Bermegui
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+// /**
+//  * @package   report_mystudent
+//  * @copyright 2022 Veronica Bermegui
+//  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//  */
 
-define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function ($, Ajax, Log, Chart) {
+define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function ($, Log, Chart, Ajax) {
     'use strict';
 
-    function init() {
+    function init(origin) {
+        if (origin == 'dashboard') {
+            getGradesEffortTrend();
+        } else { // Im in the view for this section.
+            document.getElementById("searchReportInput").addEventListener('keyup', filterYear);
+            document.getElementById("searchByClassGradeInput").addEventListener('keyup', filterByClass);
+            document.getElementById("searchByClassEffortInput").addEventListener('keyup', filterByClass);
+            document.querySelector('.pop-up-grade').addEventListener('click', popup);
+            document.querySelector('.pop-up-effort').addEventListener('click', popup);
+            //  document.querySelector('.file-pdf').addEventListener('click', displayReportService);
+            document.querySelectorAll('.file-pdf').forEach(function (icon) {
+                icon.addEventListener('click', displayReportService)
+            });
+            getGradeHistory();
+            getEffortHistory();
 
-        var control = new AcademicInfo();
-        control.main();
-    }
-
-    /**
-     * AcademicInfo a single report_mystudent block instance contents.
-     *
-     * @constructor
-     */
-    function AcademicInfo() {
-     
-    }
-
-
-    /**
-     * Run the controller.
-     *
-     */
-    AcademicInfo.prototype.main = function () {
-        let self = this;
-      
-        const campus = document.querySelector('[data-username]').getAttribute('data-campus'); 
-        if (campus == "Senior") {
-            self.trendChartSenior();
-            self.getGradeHistory();
-            self.getEffortHistory();
-        } else {
-            self.trendChartPrimary();
+            // Close the modal if clicked outside of the backdrop/
+            // window.onclick = function (event) {
+            //     var modal = document.querySelector('.pop-up-grade');
+            //     if (event.target == modal) {
+            //         modal.style.display = "none";
+            //     }
+            //     var modal = document.querySelector('.pop-up-effort');
+            //     if (event.target == modal) {
+            //         modal.style.display = "none";
+            //     }
+            // }
         }
+    }
+
+    function getGradesEffortTrend() {
+
+        const username = document.querySelector('[data-username]').getAttribute('data-username');
+        const campus = document.querySelector('[data-campus]').getAttribute('data-campus');
+
+        // document.getElementById('chart-academic').nextElementSibling.removeAttribute('hidden');
+        document.getElementById("overlay").style.display = "flex";
+        //document.querySelector('.card-body-academic-info').firstElementChild.style.display = "flex";
+        // document.querySelector('.card-img-attendance').firstElementChild.style.display = "flex";
+        document.querySelector('.card-img-academic').firstElementChild.style.display = "flex";
+
+
+        Ajax.call([{
+            methodname: 'report_mystudent_get_grade_effort_trend',
+            args: {
+                username: username,
+                campus: campus
+            },
+
+            done: function (response) {
+                const htmlResult = response.result;
+                Log.debug(htmlResult);
+
+                if (campus == 'Senior') {
+                    trendChartSenior(htmlResult);
+                } else {
+                    trendChartPrimary(htmlResult);
+                }
+            },
+
+            fail: function (reason) {
+                Log.debug(reason);
+                // remove spinner
+                //document.querySelector('.card-body-academic-info').firstElementChild.style.display = "none";
+                document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
+            }
+        }]);
 
     };
 
-
-
-
-    AcademicInfo.prototype.trendChartSenior = function () {
-
-        const ctx = document.getElementById("trendChart");
+    function trendChartSenior(result) {
+        const ctx = document.getElementById("chart-academic");
         if (!ctx) {
             return;
         }
-        const performanceEl = document.querySelector("#performance");
-        const performance = JSON.parse(performanceEl.dataset.performance);
 
+        const performance = JSON.parse(result);
         let labels = [];
         let sets = [];
         let attendance = [];
@@ -123,6 +154,7 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
             tension: 0.1
         });
 
+
         const data = {
             labels: labels,
             datasets: sets
@@ -134,36 +166,25 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
 
         }
 
-        const plugin = {
-            id: 'custom_canvas_background_color',
-            beforeDraw: (chart) => {
-                const ctx = chart.canvas.getContext('2d');
-                ctx.save();
-                ctx.globalCompositeOperation = 'destination-over';
-                ctx.fillStyle = '#f6f5f5';
-                ctx.fillRect(0, 0, chart.width, chart.height);
-                ctx.restore();
-            }
-        };
+        // remove spinner
+        // document.querySelector('.card-body-academic-info').firstElementChild.style.display = "none";
+        document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
 
         var myLineChart = new Chart(ctx, {
             type: 'line',
             data: data,
             options: options,
-            plugins: [plugin],
 
         });
+    }
 
-    };
-
-    AcademicInfo.prototype.trendChartPrimary = function () {
-        const ctx = document.getElementById("trendChart");
+    function trendChartPrimary(result) {
+        const ctx = document.getElementById("chart-academic");
         if (!ctx) {
             return;
         }
 
-        const performanceEl = document.querySelector("#performance");
-        const performance = JSON.parse(performanceEl.dataset.performance);
+        const performance = JSON.parse(result);
 
         let labels = [];
         let sets = [];
@@ -377,8 +398,6 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
 
                 }
             }
-
-
         }
 
         const plugin = {
@@ -393,6 +412,9 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
             }
         };
 
+        // remove spinner
+        //document.getElementById('chart-academic').nextElementSibling.setAttribute('hidden', true);
+
         var myLineChart = new Chart(ctx, {
             type: 'line',
             data: data,
@@ -401,40 +423,90 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
 
         });
     }
-    AcademicInfo.prototype.getEffortHistory = function () {
 
-        const element = document.querySelector('.grade-effort-trend');
-        const username = element.getAttribute('data-username');
-        const campus = element.getAttribute('data-campus');
-        // Add spinner.
-        $('#effort-history-tb').removeAttr('hidden');
+    function filterYear() {
+        // Declare variables
 
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchReportInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("reports-table");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                const date = txtValue.split('/').pop()
+                if (date.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function filterByClass(e) {
+        // Declare variables
+        Y.log(e);
+
+        var input, filter, table, tr, td, i, txtValue;
+        const inputid = e.target.id;
+        input = document.getElementById(inputid); //"searchByClassInput searchByClassGradeInput"
+        filter = input.value.toUpperCase();
+        table = inputid == "searchByClassGradeInput" ? document.getElementById("grade-history-table") : document.getElementById("effort-history-table");
+        tr = table.getElementsByTagName("tr");
+
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 1; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                // const date = txtValue.split('/').pop()
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    function displayReportService(e) {
+        Y.log(e.target.getAttribute('data-tdss'));
+        const tdocumentsseq = e.target.getAttribute('data-tdss');
         Ajax.call([{
-            methodname: 'report_mystudent_get_effort_history',
+            methodname: 'report_mystudent_get_student_academic_report',
             args: {
-                username: username,
-                campus: campus
+                tdocumentsseq: tdocumentsseq
             },
 
             done: function (response) {
-                Log.debug(response);
-                const htmlResult = response.html;
-                $('#effort-history-tb').attr('hidden', true);
-                $('[data-region="effort-history-table"]').replaceWith(htmlResult);
-
+                const base64Data = JSON.parse(response.blob);
+                displayReport(base64Data);
             },
 
             fail: function (reason) {
-                Log.error('report_mystudent: Unable to get context.');
+                Log.error('block_academic_report_get_student_report: Unable to get blob.');
                 Log.debug(reason);
-                $('[data-region="effort-history-table"]').replaceWith('<p class="alert alert-danger">Data not available. Please try later</p>');
             }
         }]);
 
-    }
-    AcademicInfo.prototype.getGradeHistory = function () {
 
-        const element = document.querySelector('.grade-effort-trend');
+    };
+
+    async function displayReport(base64Data) {
+        const base64Response = await fetch(`data:application/pdf;base64,${base64Data}`);
+        const blob = await base64Response.blob();
+        var blobURL = URL.createObjectURL(blob);
+        window.open(blobURL);
+    }
+
+    function getGradeHistory() {
+
+        const element = document.querySelector('.cgs-dashboard-academic-info-container');
         const username = element.getAttribute('data-username');
         const campus = element.getAttribute('data-campus');
         // Add spinner.
@@ -452,17 +524,107 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
                 const htmlResult = response.html;
                 $('#grade-history-tb').attr('hidden', true);
                 $('[data-region="grade-history-table"]').replaceWith(htmlResult);
+                //enable expand button
+                $('.pop-up-effort').removeAttr('disabled');
 
             },
 
             fail: function (reason) {
                 Log.error('report_mystudent: Unable to get context.');
                 Log.debug(reason);
+                $('#grade-history-tb').attr('hidden', true);
                 $('[data-region="grade-history-table"]').replaceWith('<p class="alert alert-danger">Data not available. Please try later</p>');
             }
         }]);
 
 
+    }
+
+    function getEffortHistory() {
+
+        const element = document.querySelector('.cgs-dashboard-academic-info-container');
+        const username = element.getAttribute('data-username');
+        const campus = element.getAttribute('data-campus');
+        // Add spinner.
+        $('#effort-history-tb').removeAttr('hidden');
+
+        Ajax.call([{
+            methodname: 'report_mystudent_get_effort_history',
+            args: {
+                username: username,
+                campus: campus
+            },
+
+            done: function (response) {
+                Log.debug(response);
+                const htmlResult = response.html;
+                $('#effort-history-tb').attr('hidden', true);
+                $('[data-region="effort-history-table"]').replaceWith(htmlResult);
+                $('.pop-up-grade').removeAttr('disabled');
+
+            },
+
+            fail: function (reason) {
+                Log.error('report_mystudent: Unable to get context.');
+                Log.debug(reason);
+                $('#effort-history-tb').attr('hidden', true);
+                $('[data-region="effort-history-table"]').replaceWith('<p class="alert alert-danger">Data not available. Please try later</p>');
+            }
+        }]);
+
+    }
+
+    function popup(e) {
+        var container;
+        var modalcontainer;
+        //replace the icon
+        e.target.classList.remove('fa-external-link');
+        e.target.classList.add('fa-window-close');
+        e.target.setAttribute('title', 'Close');
+        Y.log(e);
+
+        if (e.target.classList.contains('pop-up-grade')) {
+            container = document.querySelector('.pop-up-grade').closest('div.cgs-grade-history-container');
+            modalcontainer = container.closest('div.cgs-grade-main-container');
+            document.getElementById('grade-history-table').closest('div.grades-his').classList.add('modal-history-content');
+            modalcontainer.classList.add('modal-history-background');
+            document.querySelector('.pop-up-grade.fa-window-close').addEventListener('click', closePopup);
+            document.querySelector('.pop-up-grade').removeEventListener('click', popup);
+
+
+        } else {
+            container = document.querySelector('.pop-up-effort').closest('div.cgs-effort-history-container');
+            modalcontainer = container.closest('div.cgs-effort-main-container');
+            document.getElementById('effort-history-table').closest('div.effort-his').classList.add('modal-history-content');
+            modalcontainer.classList.add('modal-history-background');
+            document.querySelector('.pop-up-effort.fa-window-close').addEventListener('click', closePopup);
+            document.querySelector('.pop-up-effort').removeEventListener('click', popup);
+        }
+
+
+
+    }
+
+    function closePopup(e) {
+        const gradepopup = e.target.classList.contains('pop-up-grade');
+        const modalcontentdiv = e.target.classList.contains('pop-up-grade') ? e.target.closest("div.grades-his") : e.target.closest("div.effort-his");
+        modalcontentdiv.classList.remove('modal-history-content');
+
+        if (gradepopup) {
+            (modalcontentdiv.closest('.cgs-grade-main-container')).classList.remove('modal-history-background');
+        } else {
+            (modalcontentdiv.closest('.cgs-effort-main-container')).classList.remove('modal-history-background');
+        }
+
+        // Add the listener for the close
+        e.target.classList.add('fa-external-link');
+        e.target.classList.remove('fa-window-close');
+        e.target.setAttribute('title', 'Expand');
+
+        document.querySelector('.pop-up-grade').removeEventListener('click', closePopup);
+        document.querySelector('.pop-up-effort').removeEventListener('click', closePopup);
+        document.querySelector('.pop-up-grade').addEventListener('click', popup);
+        document.querySelector('.pop-up-effort').addEventListener('click', popup);
     }
 
     return {

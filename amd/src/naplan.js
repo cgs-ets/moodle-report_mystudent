@@ -19,27 +19,61 @@
 //  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 //  */
 
-define(['jquery', 'core/log', 'report_mystudent/chart'], function ($, Log, Chart) {
+define(['jquery', 'report_mystudent/chart', 'core/ajax', 'core/modal_factory'], function ($, Chart, Ajax, ModalFactory) {
     'use strict';
 
-    function init(naplanscale) {
+    function init() {
+        getNaplanResult();
+        open_naplan_scale();
+        close_naplan_scale();
 
-        $("#scale-info").hover(function () {
-            $(this).append($('<img id = "scaleimg" src=" ' + naplanscale + '"' + '>'));
-        }, function () {
-            $(this).find("img").last().remove();
-        });
-        renderBarChar();
+        window.onclick = function (event) {
+            var modal = document.getElementById("myModal");
+            if (event.target == document.getElementById("myModal")) {
+                modal.style.display = "none";
+            }
+        }
     }
 
+    function getNaplanResult() {
 
-    function renderBarChar() {
-        const ctx = document.getElementById("resultsChart");
+        const username = document.querySelector('[data-username]').getAttribute('data-username');
+
+        document.querySelector('.card-top-naplan').firstElementChild.style.display = "flex"
+
+        Ajax.call([{
+            methodname: 'report_mystudent_get_naplan_result',
+            args: {
+                username: username,
+            },
+
+            done: function (response) {
+                const htmlResult = response.result;
+                renderBarChar(htmlResult);
+
+            },
+
+            fail: function (reason) {
+                // remove spinner
+                document.querySelector('.card-body-naplan').firstElementChild.style.display = "none"
+                document.querySelector('.card-top-naplan').firstElementChild.style.display = "none"
+
+                const pelement = document.createElement('p');
+                pelement.textContent = "There was a problem when getting data. Please try again later";
+                document.getElementById('chart-naplan').appendChild(pelement);
+            }
+        }]);
+
+    };
+
+
+    function renderBarChar(result) {
+        const ctx = document.getElementById("chart-naplan");
         if (!ctx) {
             return;
         }
 
-        const results = JSON.parse(ctx.getAttribute('data-results'));
+        const results = JSON.parse(result);
         const datasets = [];
 
         for (let i = 0; i < results.datasets.length; i++) {
@@ -48,24 +82,16 @@ define(['jquery', 'core/log', 'report_mystudent/chart'], function ($, Log, Chart
                 data: results.datasets[i].results,
                 backgroundColor: results.datasets[i].backgroundcolor,
                 borderColor: results.datasets[i].backgroundcolor,
-                borderWidth: 1
+                tension: 0.4,
+                borderWidth: 0,
+                borderRadius: 4,
+                borderSkipped: false,
+                borderWidth: 1,
+
             }
             datasets.push(data);
         }
 
-        Log.debug(datasets);
-
-        Chart.register({
-            id: 'custom_naplan_canvas_background_color',
-            beforeDraw: (chart) => {
-                const ctx = chart.canvas.getContext('2d');
-                ctx.save();
-                ctx.globalCompositeOperation = 'destination-over';
-                ctx.fillStyle = '#f6f5f5';
-                ctx.fillRect(0, 0, chart.width, chart.height);
-                ctx.restore();
-            }
-        });
 
         const config = {
             type: 'bar',
@@ -90,6 +116,7 @@ define(['jquery', 'core/log', 'report_mystudent/chart'], function ($, Log, Chart
                     intersect: false,
                 },
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     tooltip: {
                         callbacks: {
@@ -133,7 +160,6 @@ define(['jquery', 'core/log', 'report_mystudent/chart'], function ($, Log, Chart
                             },
                         }
                     },
-                    custom_naplan_canvas_background_color: true
                 },
                 legend: {
                     position: 'top',
@@ -141,9 +167,25 @@ define(['jquery', 'core/log', 'report_mystudent/chart'], function ($, Log, Chart
 
             }
         };
-
+        // remove spinner
+        document.querySelector('.card-top-naplan').firstElementChild.style.display = "none";
         const myChart = new Chart(ctx, config);
 
+    }
+
+    function open_naplan_scale() {
+        $('a.naplan-scale').on('click', function (e) {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "block";
+        });
+    }
+
+    function close_naplan_scale() {
+        $('i.cgs-naplan-close').on('click', function (e) {
+
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        });
     }
 
     return {

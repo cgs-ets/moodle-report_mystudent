@@ -18,16 +18,6 @@ along with Moodle. If not, see
 @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 }}
 <div class = "cgs-dashboard-attendance-container">
-   <div class = "cgs-dashboard-attendance-by-term-container">
-      <h2>{{#str}} attendancebyterm, report_mystudent {{/str}}</h2>
-      <br>
-      {{^notermdata}}
-      {{> report_mystudent/attendance/attendance_by_term}}
-      {{/notermdata}}
-      {{#noclassesdata}}    
-      {{> report_mystudent/attendance/attendance_no_data}}
-      {{/noclassesdata}}
-      </div
       <br>
       <div class = "cgs-dashboard-attendance-by-class-container">
          <h2>{{#str}} attendancebyclassforterm, report_mystudent {{/str}}</h2>

@@ -1,0 +1,87 @@
+{{!
+This file is part of Moodle - http://moodle.org/
+
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
+
+@package report_mystudent
+@copyright 2022 Veronica Bermegui
+@license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+
+}}
+
+<div class = "cgs-dashboard-academic-info-container" data-username= "{{username}}" data-instanceid="{{instanceid}}" data-userid="{{userid}}" data-campus="{{campus}}">
+   <div class = "cgs-dashboard-academic-report-container">
+      <h3>Academic reports</h3>
+      <input type="text" id="searchReportInput"  placeholder="Search for year..">
+      <br><br>
+      <table id = "reports-table" class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar" >
+         <thead>
+            <tr class="attheader">
+               <th style="width:70%;">{{#str}} description, report_mystudent {{/str}}</th>
+               <th style="width:10%;">{{#str}} viewreport, report_mystudent {{/str}}</th>
+               <th style="width:20%;">{{#str}} createddate, report_mystudent {{/str}}</th>
+            </tr>
+         </thead>
+         <tbody class="ac-rep-tbody ">
+            {{#reports}}
+            <tr >
+               <td class="view-report">{{description}}</td>
+               <td class="text-center view-report"> 
+                  <img data-tdss="{{tdocumentsseq}}" class ="file-pdf" src="{{icon}}" alt="view report">
+               </td>
+               <td>{{documentcreateddate}}</td>
+            </tr>
+            {{/reports}}
+         </tbody>
+      </table>
+   </div>
+    <div class = "cgs-grade-main-container">
+        <div class = "cgs-grade-history-container">
+            <div class = "grades-his">
+                <h3 class = "history-title">Grades history </h3><span><i class="fa fa-external-link fa-lg  pop-up-history pop-up-grade" aria-hidden="true" title = "Expand" disabled></i></span>
+                <input type="text" id="searchByClassGradeInput"  placeholder="Search for class..">
+                <br><br>
+                <div class='spinner-border  text-primary' id="grade-history-tb" hidden>
+                <span class="sr-only">Loading...</span>
+                </div>        
+                <div data-region="grade-history-table"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class = "cgs-effort-main-container">
+        <div class = "cgs-effort-history-container">
+            <div class = "effort-his">
+                <h3 class = "history-title">Effort history</h3><span><i class="fa fa-external-link fa-lg pop-up-history pop-up-effort" aria-hidden="true" title = "Expand" disabled></i></span>
+                <input type="text" id="searchByClassEffortInput"  placeholder="Search for class..">
+                <br><br>
+                <div class='spinner-border  text-primary' id="effort-history-tb" hidden>
+                <span class="sr-only">Loading...</span>
+                </div>        
+                <div data-region="effort-history-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class =  "cgs-assignments-container"></div>
+</div>
+
+
+
+{{#js}}
+    require(['report_mystudent/academicinfo'], function(Mod) {
+    Mod.init();
+});
+{{/js}}

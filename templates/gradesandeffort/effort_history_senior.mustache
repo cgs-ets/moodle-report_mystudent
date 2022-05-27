@@ -22,10 +22,10 @@ along with Moodle. If not, see
 }}
 
 
-    <table class="cgs-dashboard-gandeffort-table">
+    <table id = "effort-history-table" class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar effort-history-table">
         <thead>
             <tr class="text-center">
-                <th>{{#str}} classlabel, report_mystudent {{/str}}</th>
+                <th style="width: 100%;">{{#str}} classlabel, report_mystudent {{/str}}</th>
                 {{#years_effort}}
                 {{#labels}}
                 <th colspan="4">{{label}} </th>

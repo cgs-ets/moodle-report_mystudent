@@ -62,4 +62,6 @@ $renderer = $PAGE->get_renderer('report_mystudent');
 
 echo $renderer->report_mystudent_cgs_dashboard($id);
 
+$PAGE->requires->js_call_amd('report_mystudent/dashboard', 'init', []);
+
 echo $OUTPUT->footer();

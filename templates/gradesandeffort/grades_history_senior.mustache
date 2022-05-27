@@ -23,10 +23,10 @@
     
   
 
-        <table class="cgs-dashboard-gandeffort-table">
+        <table id = 'grade-history-table' class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar grade-history-table">
         <thead> 
             <tr class="text-center">
-                <th colspan=""></th>
+                <th style="width: 100%;">{{#str}} classlabel, report_mystudent {{/str}}</th>
                 {{#years_grades}}
                 {{#labels}}
                   <th colspan="4">{{label}} </th>               
@@ -37,8 +37,7 @@
         </thead>
         <tbody>
             <tr class="text-center">    
-                <th>{{#str}} classlabel, report_mystudent {{/str}}</th>
-
+                <th></th>
                 {{#years_grades}}
                 {{#labels}}
                     {{#termlabels}}   

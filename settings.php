@@ -26,13 +26,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-// Just a link
-// $ADMIN->add('reports', new admin_externalpage(
-//     'mystudent',
-//     get_string('reportname', 'report_mystudent'),
-//     $CFG->wwwroot . "/report/mystudent/index.php"
-// ));
-
 if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_heading('report_mystudent', '', ''));
@@ -74,12 +67,9 @@ if ($ADMIN->fulltree) {
 
     // Academic infogandf
     $settings->add(new admin_setting_heading('report_mystudent_academicinfo', get_string('gandf', 'report_mystudent'), ''));
-    $context = new stdClass();
-    $context->title = get_string('gandf', 'report_mystudent');
-    echo $OUTPUT->render_from_template('report_mystudent/settings', $context);
-   //echo 'hola';
+
     // Grades Effort info 
-   
+
     $settings->add(new admin_setting_configselect(
         'report_mystudent/dbtypegandf',
         get_string('dbtypegandf', 'report_mystudent'),
@@ -112,7 +102,7 @@ if ($ADMIN->fulltree) {
     //$settings->add(new admin_setting_configtext('report_mystudent/profileurl', get_string('profileurl', 'report_mystudent'), get_string('profileurl_desc', 'report_mystudent'), ''));
 
     // Naplan
-    
+
     $settings->add(new admin_setting_heading('report_mystudent_naplan', get_string('naplan', 'report_mystudent'), ''));
 
     $settings->add(new admin_setting_configselect(
@@ -143,4 +133,28 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('report_mystudent/bcyear7', get_string('bcyear7', 'report_mystudent'), get_string('bcyear7_desc', 'report_mystudent'), 'rgba(153, 102, 255, 0.2)'));
 
     $settings->add(new admin_setting_configtext('report_mystudent/bcyear9', get_string('bcyear9', 'report_mystudent'), get_string('bcyear9_desc', 'report_mystudent'), 'rgba(153, 102, 255, 0.2)'));
+
+    // Academic Report.
+    $settings->add(new admin_setting_heading('report_mystudent_academicreport', get_string('academicreport', 'report_mystudent'), ''));
+    $settings->add(new admin_setting_configselect(
+        'report_mystudent/dbtypeacademicreport',
+        get_string('dbtypeacademicreport', 'report_mystudent'),
+        get_string('dbtypeacademicreport_desc', 'report_mystudent'),
+        '',
+        $options
+    ));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbhostacademicreport', get_string('dbhostacademicreport', 'report_mystudent'), get_string('dbhostacademicreport_desc', 'report_mystudent'), 'localhost'));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbuseracademicreport', get_string('dbuseracademicreport', 'report_mystudent'), '', ''));
+
+    $settings->add(new admin_setting_configpasswordunmask('report_mystudent/dbpassacademicreport', get_string('dbpassacademicreport', 'report_mystudent'), '', ''));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbnameacademicreport', get_string('dbnameacademicreport', 'report_mystudent'), '', ''));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbspstudentreportdocs', get_string('dbspstudentreportdocs', 'report_mystudent'), get_string('dbspstudentreportdocs_desc', 'report_mystudent'), ''));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbspsretrievestdreport', get_string('dbspsretrievestdreport', 'report_mystudent'), get_string('dbspsretrievestdreport_desc', 'report_mystudent'), ''));
+
+    // $settings->add(new admin_setting_configtext('report_mystudent/profileurl', get_string('profileurl', 'report_mystudent'), get_string('profileurl_desc', 'block_attendance_report'), ''));
 }

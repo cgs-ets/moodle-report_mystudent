@@ -140,8 +140,9 @@ function get_performance_trend($username, $campus) {
     }
 }
 
+
 function get_templates_contexts($userid) {
-    global $COURSE, $DB;
+    global  $DB;
     $profileuser = $DB->get_record('user', ['id' => $userid]);
     profile_load_custom_fields($profileuser);
     $notprimary = is_numeric(strpos($profileuser->profile['CampusRoles'], 'Primary'));

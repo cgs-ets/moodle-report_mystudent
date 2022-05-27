@@ -22,15 +22,8 @@ along with Moodle. If not, see
 }}
 
 
-<div class="grade-effort-trend cgs-dashboard-gandef-container" data-username= "{{username}}" data-instanceid="{{instanceid}}" data-userid="{{userid}}" 
-   data-campus="{{campus}}">
-   <div class = "grade-effort-graph-container">
-    <h3>{{#str}} gradesandeffortreportitle, report_mystudent {{/str}}</h3>
-        {{> report_mystudent/gradesandeffort/performance_trend}}
-   </div>
-      <br>
-      <br>
-      <div class ='grade-effort-tables-container'>
+<div class="grade-effort-trend" data-username= "{{username}}" data-instanceid="{{instanceid}}" data-userid="{{userid}}" data-campus="{{campus}}">
+      
       <h3>Grades history</h3> 
         <div class='spinner-border  text-primary' id="grade-history-tb" hidden>
             <span class="sr-only">Loading...</span>
@@ -42,8 +35,7 @@ along with Moodle. If not, see
             <span class="sr-only">Loading...</span>
         </div>
         <div data-region="effort-history-table"></div>
-      
-      </div>
+         
  
 </div>
 

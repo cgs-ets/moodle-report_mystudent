@@ -34,6 +34,16 @@ $functions = [
         'loginrequired' => true,
         'ajax' => true    // Is this service available to 'internal' ajax calls.
     ],
+
+    'report_mystudent_get_attendance_by_term' => [
+        'classname' => 'report_mystudent\external\api', // Class containing a reference to the external function.
+        'methodname' => 'get_attendance_by_term', // External function name.
+        'description' => 'Get attendance by term', // Human readable description of the WS function.
+        'type' => 'read', // DB rights of the WS function.
+        'loginrequired' => true,
+        'ajax' => true    // Is this service available to 'internal' ajax calls.
+    ],
+
     'report_mystudent_get_grade_history' => [
         'classname' => 'report_mystudent\external\api', // Class containing a reference to the external function.
         'methodname' => 'get_grade_history', // External function name.
@@ -50,5 +60,32 @@ $functions = [
         'loginrequired' => true,
         'ajax' => true    // Is this service available to 'internal' ajax calls.
     ],
+    
+    'report_mystudent_get_naplan_result' => [
+        'classname' => 'report_mystudent\external\api', // Class containing a reference to the external function.
+        'methodname' => 'get_naplan_result', // External function name.
+        'description' => 'Get NAPLAN results', // Human readable description of the WS function.
+        'type' => 'read', // DB rights of the WS function.
+        'loginrequired' => true,
+        'ajax' => true    // Is this service available to 'internal' ajax calls.
+    ],
 
+    'report_mystudent_get_grade_effort_trend' => [
+        'classname' => 'report_mystudent\external\api', // Class containing a reference to the external function.
+        'methodname' => 'get_grade_effort_trend', // External function name.
+        'description' => 'Get NAPLAN results', // Human readable description of the WS function.
+        'type' => 'read', // DB rights of the WS function.
+        'loginrequired' => true,
+        'ajax' => true    // Is this service available to 'internal' ajax calls.
+    ],
+   
+    'report_mystudent_get_student_academic_report' => [
+        'classname' => 'report_mystudent\external\api', // Class containing a reference to the external function.
+        'methodname' => 'get_student_academic_report', // External function name.
+        'description' => 'Get student reports', // Human readable description of the WS function.
+        'type' => 'read', // DB rights of the WS function.
+        'loginrequired' => true,
+        'ajax' => true    // Is this service available to 'internal' ajax calls.
+    ],
+   
 ];

@@ -20,16 +20,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define(['jquery', 'core/ajax', 'core/log'], function ($, Ajax, Log) {
+define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function ($, Ajax, Log, Chart) {
     'use strict';
 
-    function init() {
+    function init(origin) {
         Log.debug("mystudent: attendance report : initialising controls");
-        const element = document.getElementById('rollmarking-container');
-        const username = element.getAttribute('data-username');
-        const campus = element.getAttribute('data-campus');
-        var control = new AttendanceControl(username, campus);
-        control.main();
+        var control = new AttendanceControl(origin);
+        control.main(origin);
     }
 
     /**
@@ -37,19 +34,29 @@ define(['jquery', 'core/ajax', 'core/log'], function ($, Ajax, Log) {
      *
      * @constructor
      */
-    function AttendanceControl(username, campus) {
+    function AttendanceControl(origin) {
         let self = this;
-        self.username = username;
-        self.campus = campus;
+
+        if (origin != 'dashboard') {
+            const element = document.getElementById('rollmarking-container');
+            const username = element.getAttribute('data-username');
+            const campus = element.getAttribute('data-campus');
+            self.username = username;
+            self.campus = campus;
+        }
     }
 
     /**
      * Run the controller.
      *
      */
-    AttendanceControl.prototype.main = function () {
+    AttendanceControl.prototype.main = function (origin) {
         let self = this;
-        self.setupEvents();
+        if (origin != 'dashboard') {
+            self.setupEvents();
+        } else {
+            self.getAttendanceChart();
+        }
 
     };
 
@@ -84,7 +91,7 @@ define(['jquery', 'core/ajax', 'core/log'], function ($, Ajax, Log) {
 
             done: function (response) {
                 const htmlResult = response.html;
-               
+
                 $('#attendance-based-on-rollmarking-table').attr('hidden', true);
                 $('[data-region="attendance-rollmarking"]').replaceWith(htmlResult);
             },
@@ -97,6 +104,106 @@ define(['jquery', 'core/ajax', 'core/log'], function ($, Ajax, Log) {
         }]);
 
     };
+
+    AttendanceControl.prototype.getAttendanceChart = function () {
+        const self = this;
+        const userid = document.querySelector('.card-deck').getAttribute('data-userid')
+        const campus = document.querySelector('[data-campus]').getAttribute('data-campus');
+
+        // document.getElementById('chart-attendance').nextElementSibling.removeAttribute('hidden');
+        document.querySelector('.card-img-attendance').firstElementChild.style.display = "flex";
+
+
+        Ajax.call([{
+            methodname: 'report_mystudent_get_attendance_by_term',
+            args: {
+                userid: userid,
+                campus: campus
+            },
+
+            done: function (response) {
+                const htmlResult = response.result;
+                Log.debug(htmlResult);
+                Log.debug(self);
+                self.renderAttendanceBarChar(htmlResult);
+
+            },
+
+            fail: function (reason) {
+                Log.debug(reason);
+                // remove spinner
+                //document.querySelector('.card-body-attendance').firstElementChild.style.display = "none";
+                document.querySelector('.card-img-attendance').firstElementChild.style.display = "none";
+                
+            }
+        }]);
+
+    }
+
+    AttendanceControl.prototype.renderAttendanceBarChar = function (results) {
+        const ctx = document.getElementById("chart-attendance");
+
+        if (!ctx) {
+            return;
+        }
+
+        const result = JSON.parse(results);
+        const data = [];
+        const labels = [];
+
+        for (let i = 0; i < result.length; i++) {
+
+            labels.push(`Term ${result[i].filesemester}`);
+            data.push(result[i].totalpercentageattended);
+           
+        }
+
+        const config = {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Term',
+                    tension: 0.4,
+                    borderWidth: 0,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    borderColor: '#ffc93c',
+                    backgroundColor: '#ffc93c',
+                    data: data,
+                    maxBarThickness: 6
+                }]
+
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        suggestedMax: 100,
+                        min: 1,
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                Y.log(context);
+                                return `${context.parsed.y} %`
+                            },
+                        }
+                    },
+                },
+            },
+        };
+
+        // remove spinner
+    //    document.querySelector('.card-body-attendance').firstElementChild.style.display = "none";
+       document.querySelector('.card-img-attendance').firstElementChild.style.display = "none";
+        const myChart = new Chart(ctx, config);
+    }
+
+
 
 
     return {

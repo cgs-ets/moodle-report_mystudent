@@ -107,9 +107,13 @@ function get_template_contexts($username) {
         $summaries['summaries'][] = $summary;
     }
 
-    $data = ['years' => $yearlabels, 
-    'testarea' => $summaries, 
-    'hasdata' => !empty($summaries), 'results' => json_encode($graphdata), 'naplanscale' => 'https://www.nap.edu.au/_resources/common_scales_image_file.png'];
+    $data = [
+        'years' => $yearlabels,
+        'testarea' => $summaries,
+        'hasdata' => !empty($summaries), 
+        'results' => json_encode($graphdata), 
+        'naplanscale' => 'https://www.nap.edu.au/_resources/common_scales_image_file.png'
+    ];
 
     return $data;
 }

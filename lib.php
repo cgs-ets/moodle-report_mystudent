@@ -96,3 +96,34 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
     }
 
 }
+
+function get_mentor($profileuserid) {
+    global $DB, $USER;
+    // Parents are allowed to view block in their mentee profiles.
+    $mentorrole = $DB->get_record('role', array('shortname' => 'parent'));
+    $mentor = null;
+
+    if ($mentorrole) {
+
+        $sql = "SELECT ra.*, r.name, r.shortname
+            FROM {role_assignments} ra
+            INNER JOIN {role} r ON ra.roleid = r.id
+            INNER JOIN {user} u ON ra.userid = u.id
+            WHERE ra.userid = ?
+            AND ra.roleid = ?
+            AND ra.contextid IN (SELECT c.id
+                FROM {context} c
+                WHERE c.contextlevel = ?
+                AND c.instanceid = ?)";
+        $params = array(
+            $USER->id, //Where current user
+            $mentorrole->id, // is a mentor
+            CONTEXT_USER,
+            $profileuserid, // of the prfile user
+        );
+
+        $mentor = $DB->get_records_sql($sql, $params);
+    }
+
+    return $mentor;
+}

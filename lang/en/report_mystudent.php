@@ -156,3 +156,25 @@ $string['bcyear9'] = 'Background colour year 9';
 $string['bcyear9_desc'] = 'Background colour for bar in graph representing year 9';
 $string['effortdesc'] = 'Hover over the grades to see the feedback given';
 
+
+// Academic records.
+$string['academicreport'] = 'Academic report';
+$string['dbtypeacademicreport'] = 'Database driver';
+$string['dbtypeacademicreport_desc'] = 'ADOdb database driver name, type of the external database engine.';
+$string['dbhostacademicreport'] = 'Database host';
+$string['dbhostacademicreport_desc'] = 'Type database server IP address or host name. Use a system DSN name if using ODBC. Use a PDO DSN if using PDO.';
+$string['dbnameacademicreport'] = 'Database name';
+$string['dbuseracademicreport'] = 'Database user';
+$string['dbpassacademicreport'] = 'Database password';
+$string['dbspstudentreportdocs'] = 'Student report docs';
+$string['dbspstudentreportdocs_desc'] = 'Stored procedure name to retrieve students reports';
+$string['dbspsretrievestdreport'] = 'Retrieve Student Report';
+$string['dbspsretrievestdreport_desc'] = 'Stored procedure name to retrieve report document information.';
+// $string['profileurl'] = 'Profile URL';
+// $string['profileurl_desc'] =' Moodle\'s profile URL';
+
+$string['nodbsettings'] = 'Please configure the DB options for the plugin';
+$string['description'] = 'Description';
+$string['createddate'] = 'Created date';
+$string['viewreport'] = 'View';
+

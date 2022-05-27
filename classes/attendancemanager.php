@@ -67,6 +67,21 @@ function get_attendance_by_term($profileuser) {
     }
 }
 
+function get_attendance_by_term_structure($profileuser) {
+    $attendacebyterm = get_attendance_by_term($profileuser);
+    $terms = array();
+
+    foreach ($attendacebyterm as $term) {
+        $data = new \stdClass();
+        $data->totalpercentageattended = round(floatval($term->totalpercentageattended));
+        $data->filesemester = $term->filesemester;
+        $data->currentterm = $term->currentterm;
+        $terms[] = $data;
+    }
+
+    return $terms;
+}
+
 function get_attendance_by_class($profileuser) {
 
     try {

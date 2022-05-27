@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,27 +13,27 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * @copyright 2022 Veronica Bermegui
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
- */
+// /**
+//  * @package   report_mystudent
+//  * @copyright 2022 Veronica Bermegui
+//  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+//  */
 
-namespace report_mystudent\external;
+define(['report_mystudent/naplan',
+    'report_mystudent/academicinfo',
+    'report_mystudent/attendance'
+], function (Naplan, AcademicInfo, Attendance) {
+    'use strict';
 
-defined('MOODLE_INTERNAL') || die();
+    function init() {
 
-require_once($CFG->libdir . '/externallib.php');
+        Naplan.init();
+        AcademicInfo.init('dashboard');
+        Attendance.init('dashboard');
+       
+    }
 
-use external_api;
-
-class api extends external_api
-{
-    use get_attendance_rollmarking_context;
-    use get_grade_history;
-    use get_effort_history;
-    use get_naplan_result;
-    use get_grade_effort_trend;
-    use get_attendance_by_term;
-    use get_student_academic_report;
-}
+    return {
+        init: init
+    }
+});

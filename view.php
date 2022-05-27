@@ -33,13 +33,30 @@ require_login();
 $context = context_system::instance();
 $PAGE->set_context($context);
 
+if (empty(get_mentor($id)) && !is_siteadmin($USER)) {
+
+    // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
+    $struser = get_string('user');
+    $PAGE->set_context(context_system::instance());
+    $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
+    $PAGE->set_heading($struser);
+    $PAGE->set_pagelayout('mypublic');
+    $PAGE->set_url('/user/profile.php', array('id' => $id));
+    $PAGE->navbar->add($struser);
+    echo $OUTPUT->header();
+    echo $OUTPUT->notification(get_string('usernotavailable', 'error'));
+    echo $OUTPUT->footer();
+    exit;
+}
 $PAGE->set_url('/report/mystudent/view.php', array('id' => $id));
 
 $sectionames =  [
     'attendance' => 'Attendance',
     'naplan' => 'NAPLAN',
-    'gradeandeffort' => 'Grades and effort'
+    'gradeandeffort' => 'Grades and effort',
+    'academic' => 'Academic info'
 ];
+
 
 $navigationinfo = array(
     'name' => $sectionames[$report],
@@ -80,11 +97,14 @@ switch ($report) {
     case 'gradeandeffort':
         $renderer->report_grades_effort($id);
         break;
+    case 'academic':
+        $renderer->report_grades($id, $USER->id);
+      //  $renderer->report_grades_effort($id);
+        break;
     default:
         # code...
         break;
 }
 
 
-//echo $OUTPUT->custom_block_region('content');
 echo $OUTPUT->footer();
