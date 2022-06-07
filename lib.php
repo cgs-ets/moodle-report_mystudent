@@ -57,13 +57,17 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
 
     profile_load_custom_fields($USER);
     profile_load_custom_fields($user);
+
     if (!isset($USER->profile['CampusRoles'])) {
         return;
     }
 
-    if(strpos('primary', strtolower( $user->profile['CampusRoles']))) {
+    $isprimary = strpos(strtolower($user->profile['CampusRoles']), 'primary');
+
+    if(is_int($isprimary)) {
         return;
     }
+
 
     $userroles = strtolower($USER->profile['CampusRoles']);
 
