@@ -42,7 +42,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(128, 125, 125, 0.5);
   z-index: 2;
 }
 
@@ -419,6 +419,7 @@ span#attendance-based-on-rollmarking-show {
 
 .modal-history-background .cgs-effort-history-container #effort-history-table {
   height: 80%;
+  width: inherit;
 }
 
 /* Modal Content/Box */
@@ -595,6 +596,17 @@ tr.reports-heading {
     grid-column-end: 3;
     -ms-grid-column: 1;
         grid-column-start: 1;
+  }
+  .modal-history-content,
+  .modal-report-my-student-content {
+    background-color: #fefefe;
+    margin: 50% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+  .modal-report-my-student-content img {
+    width: inherit;
   }
 }
 
