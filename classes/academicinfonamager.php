@@ -26,24 +26,24 @@ namespace report_mystudent\academic_info;
 
 /**
  * Returns the context for the template
- * @return string
+ * @return array
  */
 
 function get_template_context($studentusername, $mentorusername) {
     global $CFG;
-    $reports = get_student_academic_reports($studentusername, $mentorusername);
+    $reports = get_student_academic_reports($studentusername, $mentorusername);    
+    $data = [];
     
-    $data = null;
-
     foreach ($reports as $report) {
         $repo = new \stdClass();
         $repo->description = $report->description;
         $repo->documentcreateddate = (new  \DateTime($report->documentcreateddate))->format("d/m/Y");;
         $repo->tdocumentsseq = $report->tdocumentsseq;
         $repo->icon = new \moodle_url($CFG->wwwroot . '/report/mystudent/pix/acrobat.png');
+      
         $data['reports'][] = $repo;
+      
     }
-
     return $data;
 }
 

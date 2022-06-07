@@ -157,4 +157,38 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext('report_mystudent/dbspsretrievestdreport', get_string('dbspsretrievestdreport', 'report_mystudent'), get_string('dbspsretrievestdreport_desc', 'report_mystudent'), ''));
 
     // $settings->add(new admin_setting_configtext('report_mystudent/profileurl', get_string('profileurl', 'report_mystudent'), get_string('profileurl_desc', 'block_attendance_report'), ''));
+
+    // Assignments
+
+    $settings->add(new admin_setting_heading('report_mystudent_assignmentreport', get_string('assig_report', 'report_mystudent'), ''));
+
+    $options = array('', "mysqli", "oci", "pdo", "pgsql", "sqlite3", "sqlsrv");
+    $options = array_combine($options, $options);
+
+    $settings->add(new admin_setting_configselect(
+        'report_mystudent/dbtypeassign',
+        get_string('dbtypeassign', 'report_mystudent'),
+        get_string('dbtypeassign_desc', 'report_mystudent'),
+        '',
+        $options
+    ));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbhostassign', get_string('dbhost', 'report_mystudent'), get_string('dbhost_desc', 'report_mystudent'), 'localhost'));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbuserassign', get_string('dbuser', 'report_mystudent'), '', ''));
+
+    $settings->add(new admin_setting_configpasswordunmask('report_mystudent/dbpassassign', get_string('dbpass', 'report_mystudent'), '', ''));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbnameassign', get_string('dbname', 'report_mystudent'), '', ''));
+
+    // $settings->add(new admin_setting_configtext('report_mystudent/dbspmoodleassign', get_string('dbspmoodleassign', 'report_mystudent'), get_string('dbspmoodleassign_desc', 'report_mystudent'), ''));
+    
+    // $settings->add(new admin_setting_configtext('report_mystudent/dbspmoodleassignfeedback', get_string('dbspmoodleassignfeedback', 'report_mystudent'), get_string('dbspmoodleassignfeedback_desc', 'report_mystudent'), ''));
+
+    // $settings->add(new admin_setting_configtext('report_mystudent/dbspquizzbyid', get_string('dbspquizzbyid', 'report_mystudent'), get_string('dbspquizzbyid_desc', 'report_mystudent'), ''));
+
+    $settings->add(new admin_setting_configtext('report_mystudent/dbspassignments', get_string('dbspassignments', 'report_mystudent'), get_string('dbspassignments_desc', 'report_mystudent'), ''));
+   
+    //$settings->add(new admin_setting_configtext('report_mystudent/profileurl', get_string('profileurl', 'report_mystudent'), get_string('profileurl_desc', 'report_mystudent'), ''));
+  
 }

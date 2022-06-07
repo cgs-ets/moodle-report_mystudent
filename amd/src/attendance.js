@@ -99,7 +99,7 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
             fail: function (reason) {
                 Log.error('block_attendance_report_get_attendance_rollmarking_context: Unable to get context.');
                 Log.debug(reason);
-                $('[data-region="rm-table-container"]').replaceWith('<p class="alert alert-danger">Data not available. Please try later</p>');
+                $('[data-region="attendance-rollmarking"]').replaceWith('<p class="alert alert-danger">Data not available. Please try later</p>');
             }
         }]);
 
@@ -134,7 +134,7 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
                 // remove spinner
                 //document.querySelector('.card-body-attendance').firstElementChild.style.display = "none";
                 document.querySelector('.card-img-attendance').firstElementChild.style.display = "none";
-                
+                $('#card-body-attendance-info-text').replaceWith('<p class="card-text alert alert-danger" id ="card-body-attendance-info-text" >Data not available. Please try later</p>');
             }
         }]);
 

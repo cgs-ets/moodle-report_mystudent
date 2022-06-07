@@ -31,7 +31,9 @@ $capabilities = array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
             'manager' => CAP_ALLOW,
-            'student' => CAP_ALLOW
+            'student' => CAP_ALLOW,
+            'guest' => CAP_ALLOW  // The archetype given to parent
         ),
+       
     ),
 );

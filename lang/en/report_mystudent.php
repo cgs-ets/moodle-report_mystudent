@@ -178,3 +178,25 @@ $string['description'] = 'Description';
 $string['createddate'] = 'Created date';
 $string['viewreport'] = 'View';
 
+// Assignment
+
+$string['assig_report'] = 'Assignments summary';
+$string['dbtypeassign'] = 'Database driver';
+$string['dbtypeassign_desc'] = 'ADOdb database driver name, type of the external database engine.';
+$string['dbhostassign'] = 'Database host';
+$string['dbhostassign_desc'] = 'Type database server IP address or host name. Use a system DSN name if using ODBC. Use a PDO DSN if using PDO.';
+$string['dbuserassign'] = 'Database user';
+$string['dbpassassign'] = 'Database password';
+$string['dbspassignments'] = 'Student Synergetic Assignments by id SP';
+$string['dbspassignments_desc'] = 'Stored procedure name to retrieve Synergetic Assignments  by student by ID';
+$string['assessmentdescription'] = 'Assessment description';
+$string['markoutof'] = 'Mark (Out of)';
+$string['weighting'] = 'Weighting (%)';
+$string['cohortmeanscore'] = 'Cohort Mean';
+$string['testdate'] = 'Date';
+$string['result'] = "Result";
+$string['term'] = 'Term';
+$string['week'] = 'Week';
+$string['subject'] = 'Subject';
+$string['view'] = 'View';
+$string['nodataavailable'] = 'Data not available.';

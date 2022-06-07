@@ -2,33 +2,6 @@ $breakpoints: (phone: 640px,
     tablet: 768px,
     desktop: 1024px) !default;
 
-// .cgs-dashboard-containerr {
-//     margin: 20px;
-//     display: flex;
-//     gap: 1rem;
-
-//     // justify-items: center;
-//     @media only screen and (max-width: 900px) {
-//         flex-wrap: wrap;
-//     }
-
-//     .dash-area {
-//         border: 1px solid;
-//         border-radius: 14px;
-//         -webkit-box-shadow: 5px 5px 15px 5px #000000;
-//         box-shadow: 5px 5px 15px 5px #000;
-//         cursor: pointer;
-//         text-align: center;
-//         width: 100%;
-
-//         img {
-//             width: 12rem;
-//             vertical-align: inherit;
-//         }
-
-//     }
-// }
-
 .spinner2 {
     height: 60px;
     width: 60px;
@@ -375,7 +348,7 @@ span#attendance-based-on-rollmarking-show {
 .cgs-assignments-container {
     grid-column-end: 3;
     grid-column-start: 1;
-    height: 35vh;
+    height: auto;
     border: 1px solid gray;
     border-radius: .5rem;
     padding: 1rem;
@@ -559,6 +532,11 @@ a.chart-action {
     min-width: 100%;
 }
 
+.assignment-table {
+    @extend .cgs-dashboard-attendance-table;
+    min-width: 100%;
+}
+
 .cgs-grade-history-container {
 
     // height: 35vh;
@@ -604,6 +582,31 @@ td.assess-heading {
 tr.reports-heading {
     text-align: center;
     background-color: lightgrey;
+}
+
+.cgs-academic-cgs-activities {
+    @extend .cgs-dashboard-attendance-table;
+
+    table.feedbackfilestv tr,
+    table.feedbackfilestv td,
+    table.feedbackfilestv th {
+        border: none;
+    }
+
+}
+
+.cgs-submission-text {
+    text-align: end;
+    // height: 46vh;
+    // overflow: hidden;
+}
+
+.feedbackcomment-modal-content {
+    max-height: 20vh;
+    overflow: hidden;
+    .feedbackcomment-modal-content-expanded {
+        height: fit-content;
+    }
 }
 
 

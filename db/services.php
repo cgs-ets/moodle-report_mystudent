@@ -87,5 +87,13 @@ $functions = [
         'loginrequired' => true,
         'ajax' => true    // Is this service available to 'internal' ajax calls.
     ],
+    'report_mystudent_get_assign_context' => [
+        'classname' => 'report_mystudent\external\api', // Class containing a reference to the external function.
+        'methodname' => 'get_assign_context', // External function name.
+        'description' => 'Get assignments report', // Human readable description of the WS function.
+        'type' => 'read', // DB rights of the WS function.
+        'loginrequired' => true,
+        'ajax' => true    // Is this service available to 'internal' ajax calls.
+    ],
    
 ];

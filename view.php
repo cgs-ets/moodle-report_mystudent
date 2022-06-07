@@ -26,14 +26,17 @@ require_once('../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
 require_once('lib.php');
 
-$id     = required_param('id', PARAM_INT); // Userid.
-$report = required_param('report', PARAM_TEXT); // Type of report.
+$id         = required_param('id', PARAM_INT); // Userid.
+$report     = required_param('report', PARAM_TEXT); // Type of report.
+$course = optional_param('course', 0 ,PARAM_INT);
+$assignment = optional_param('assignment', 0 ,PARAM_INT);
+
 require_login();
 
 $context = context_system::instance();
 $PAGE->set_context($context);
 
-if (empty(get_mentor($id)) && !is_siteadmin($USER)) {
+if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
 
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
     $struser = get_string('user');
@@ -54,7 +57,8 @@ $sectionames =  [
     'attendance' => 'Attendance',
     'naplan' => 'NAPLAN',
     'gradeandeffort' => 'Grades and effort',
-    'academic' => 'Academic info'
+    'academic' => 'Academic info',
+    'rubric' => 'Assessment Rubric'
 ];
 
 
@@ -87,19 +91,12 @@ switch ($report) {
     case 'attendance':
         $renderer->report_attendance($id);
         break;
-    case 'naplan':
-        $renderer->report_naplan($id);
-        $url = empty($config->naplanscales) ? 'https://www.nap.edu.au/_resources/common_scales_image_file.png' : $config->naplanscales;
-        $PAGE->requires->js_call_amd('report_mystudent/naplan', 'init', [
-            'naplanscale' => $url,
-        ]);
-        break;
-    case 'gradeandeffort':
-        $renderer->report_grades_effort($id);
-        break;
+    
     case 'academic':
-        $renderer->report_grades($id, $USER->id);
-      //  $renderer->report_grades_effort($id);
+        $renderer->report_academic($id, $USER->id);
+        break;
+    case 'rubric' :
+        $renderer->report_rubric($id, $assignment, $course);
         break;
     default:
         # code...

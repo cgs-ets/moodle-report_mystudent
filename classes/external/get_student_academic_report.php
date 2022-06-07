@@ -69,7 +69,7 @@ trait get_student_academic_report {
 
         // Get the context for the template.
         $blob = get_student_academic_report_file($tdocumentsseq);
-
+        
         return array(
             'blob' => json_encode(base64_encode($blob), JSON_UNESCAPED_UNICODE),
         );

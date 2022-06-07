@@ -15,14 +15,30 @@ You should have received a copy of the GNU General Public License
 along with Moodle. If not, see
 <http: //www.gnu.org/licenses />.
 
-@package block_naplan_results_report
-@copyright 2021 Veronica Bermegui
+@package block_attendance_report
+@copyright 2020 Veronica Bermegui
 @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-
 }}
 
-<div class="chart-container" >
-    <canvas id="resultsChart" data-results="{{results}}"> 
-        <p>The graph cannot be displayed. Please try later</p>
-    </canvas>
-</div>
+
+<table class="cgs-academic-cgs-activities">
+   <thead>
+      <tr>
+         <th>Course</th>
+          <th>Assessment Name</th>
+         <th>Due Date</th>
+     
+      </tr>
+   </thead>
+   <tbody>
+      {{#assign}}
+      <tr>
+         <td>{{coursename}}</td>
+         <td> <a href="{{{assignmentnameurl}}}" target="_blank">{{assignmentname}}</a>
+         </td>
+         <td>{{duedate}}</td>     
+      
+      </tr>
+      {{/assign}}
+   </tbody>
+</table>

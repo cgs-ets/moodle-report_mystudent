@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'report_mystudent';
 $plugin->release = '0.1.0';
-$plugin->version = 2022052401;
+$plugin->version = 2022270501;
 $plugin->maturity = MATURITY_ALPHA;

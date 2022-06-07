@@ -123,8 +123,7 @@ function get_performance_trend($username, $campus) {
         $params = array(
             'id' => $username,
         );
-        error_log($sql);
-        error_log($username);
+
         $result = $externalDB->get_recordset_sql($sql, $params);
         $performancetrends = [];
 
@@ -147,24 +146,13 @@ function get_templates_contexts($userid) {
     profile_load_custom_fields($profileuser);
     $notprimary = is_numeric(strpos($profileuser->profile['CampusRoles'], 'Primary'));
     $campus = !$notprimary ? 'Senior' : 'Primary';
-    // error_log(print_r($profileuser, true));
     $context =  get_performance_trend_context($profileuser->username, $campus);
-
-    // $efforturlparams = array('blockid' => $instanceid, 'courseid' => $COURSE->id, 'id' => $userid, 'history' => 'effort', 'campus' => $campus);
-    // $gradeurlparams = array('blockid' => $instanceid, 'courseid' => $COURSE->id, 'id' => $userid, 'history' => 'grades', 'campus' => $campus);
-
-    $ghurl =  new \moodle_url('/blocks/grades_effort_report/view.php'/*, $gradeurlparams*/);
-    $ehurl = new \moodle_url('/blocks/grades_effort_report/view.php'/*, $efforturlparams*/);
-    // print_object( ($DB->get_record('user', ['id' => $userid]))); exit;
-    //$username = ($DB->get_record('user', ['id' => $userid]))->firstname;
-     $urlanduserdetails = ['username' => $profileuser->username, 'campus' => $campus/*, 'instanceid' => $instanceid*/, 'userid' => $userid, 'gradeurl' => $ghurl, 'efforturl' => $ehurl];
+    $urlanduserdetails = ['username' => $profileuser->username, 'campus' => $campus, 'userid' => $userid];
 
     $context = array_merge($urlanduserdetails, $context);
 
     return $context;
 }
-
-
 
 function get_templates_context($tabletorender, $username, $campus) {
 

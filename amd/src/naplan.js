@@ -61,6 +61,8 @@ define(['jquery', 'report_mystudent/chart', 'core/ajax', 'core/modal_factory'], 
                 const pelement = document.createElement('p');
                 pelement.textContent = "There was a problem when getting data. Please try again later";
                 document.getElementById('chart-naplan').appendChild(pelement);
+                $('#card-body-naplan-text').replaceWith('<p class="card-text alert alert-danger" id ="card-body-naplan-text" >Data not available. Please try later</p>');
+
             }
         }]);
 
@@ -68,108 +70,115 @@ define(['jquery', 'report_mystudent/chart', 'core/ajax', 'core/modal_factory'], 
 
 
     function renderBarChar(result) {
-        const ctx = document.getElementById("chart-naplan");
-        if (!ctx) {
-            return;
-        }
+        const isEmpty = result == null || Object.keys(result).length === 0;
+        if (isEmpty) {
+            document.querySelector('.card-top-naplan').firstElementChild.style.display = "none";
+            $('#card-body-naplan-text').replaceWith('<p class="card-text alert alert-danger" id ="card-body-academic-info-text" >Data not available.</p>');
+        } else {
 
-        const results = JSON.parse(result);
-        const datasets = [];
-
-        for (let i = 0; i < results.datasets.length; i++) {
-            let data = {
-                label: results.datasets[i].label,
-                data: results.datasets[i].results,
-                backgroundColor: results.datasets[i].backgroundcolor,
-                borderColor: results.datasets[i].backgroundcolor,
-                tension: 0.4,
-                borderWidth: 0,
-                borderRadius: 4,
-                borderSkipped: false,
-                borderWidth: 1,
-
+            const ctx = document.getElementById("chart-naplan");
+            if (!ctx) {
+                return;
             }
-            datasets.push(data);
-        }
+
+            const results = JSON.parse(result);
+            const datasets = [];
+
+            for (let i = 0; i < results.datasets.length; i++) {
+                let data = {
+                    label: results.datasets[i].label,
+                    data: results.datasets[i].results,
+                    backgroundColor: results.datasets[i].backgroundcolor,
+                    borderColor: results.datasets[i].backgroundcolor,
+                    tension: 0.4,
+                    borderWidth: 0,
+                    borderRadius: 4,
+                    borderSkipped: false,
+                    borderWidth: 1,
+
+                }
+                datasets.push(data);
+            }
 
 
-        const config = {
-            type: 'bar',
-            labels: results.labels,
-            data: {
+            const config = {
+                type: 'bar',
                 labels: results.labels,
-                datasets: datasets,
-            },
-            options: {
-                scales: {
-                    y: {
-                        suggestedMax: 10,
-                        min: 1,
-                        title: {
-                            text: 'Band',
-                            display: true,
-                        }
+                data: {
+                    labels: results.labels,
+                    datasets: datasets,
+                },
+                options: {
+                    scales: {
+                        y: {
+                            suggestedMax: 10,
+                            min: 1,
+                            title: {
+                                text: 'Band',
+                                display: true,
+                            }
+                        },
                     },
-                },
-                interaction: {
-                    mode: 'point',
-                    intersect: false,
-                },
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const belowStd = 'Below the national minimun standard';
-                                const minStd = 'National minimun standard';
-                                const aboveStd = 'Above the national minimun standard';
-                                if (context.dataset.label == 'Year 3') {
-                                    if (context.parsed.y >= 3) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
-                                    } else if (context.parse.y == 2) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
-                                    } else {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
-                                    }
-                                } else if (context.dataset.label == 'Year 5') {
-                                    if (context.parsed.y >= 5) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
-                                    } else if (context.parse.y == 4) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
-                                    } else {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
-                                    }
-                                } else if (context.dataset.label == 'Year 7') {
-                                    if (context.parsed.y >= 6) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
-                                    } else if (context.parse.y == 5) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
-                                    } else {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
-                                    }
-                                } else if (context.dataset.label == 'Year 9') {
-                                    if (context.parsed.y >= 7) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
-                                    } else if (context.parse.y == 6) {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
-                                    } else {
-                                        return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
-                                    }
-                                }
-                            },
-                        }
+                    interaction: {
+                        mode: 'point',
+                        intersect: false,
                     },
-                },
-                legend: {
-                    position: 'top',
-                },
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const belowStd = 'Below the national minimun standard';
+                                    const minStd = 'National minimun standard';
+                                    const aboveStd = 'Above the national minimun standard';
+                                    if (context.dataset.label == 'Year 3') {
+                                        if (context.parsed.y >= 3) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
+                                        } else if (context.parse.y == 2) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
+                                        } else {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
+                                        }
+                                    } else if (context.dataset.label == 'Year 5') {
+                                        if (context.parsed.y >= 5) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
+                                        } else if (context.parse.y == 4) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
+                                        } else {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
+                                        }
+                                    } else if (context.dataset.label == 'Year 7') {
+                                        if (context.parsed.y >= 6) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
+                                        } else if (context.parse.y == 5) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
+                                        } else {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
+                                        }
+                                    } else if (context.dataset.label == 'Year 9') {
+                                        if (context.parsed.y >= 7) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + aboveStd;
+                                        } else if (context.parse.y == 6) {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + minStd;
+                                        } else {
+                                            return context.dataset.label + ": Band " + context.parsed.y + '. ' + belowStd;
+                                        }
+                                    }
+                                },
+                            }
+                        },
+                    },
+                    legend: {
+                        position: 'top',
+                    },
 
-            }
-        };
-        // remove spinner
-        document.querySelector('.card-top-naplan').firstElementChild.style.display = "none";
-        const myChart = new Chart(ctx, config);
+                }
+            };
+            // remove spinner
+            document.querySelector('.card-top-naplan').firstElementChild.style.display = "none";
+            const myChart = new Chart(ctx, config);
+        }
 
     }
 

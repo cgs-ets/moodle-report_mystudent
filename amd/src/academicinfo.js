@@ -31,24 +31,13 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             document.getElementById("searchByClassEffortInput").addEventListener('keyup', filterByClass);
             document.querySelector('.pop-up-grade').addEventListener('click', popup);
             document.querySelector('.pop-up-effort').addEventListener('click', popup);
-            //  document.querySelector('.file-pdf').addEventListener('click', displayReportService);
             document.querySelectorAll('.file-pdf').forEach(function (icon) {
                 icon.addEventListener('click', displayReportService)
             });
-            getGradeHistory();
+           
             getEffortHistory();
-
-            // Close the modal if clicked outside of the backdrop/
-            // window.onclick = function (event) {
-            //     var modal = document.querySelector('.pop-up-grade');
-            //     if (event.target == modal) {
-            //         modal.style.display = "none";
-            //     }
-            //     var modal = document.querySelector('.pop-up-effort');
-            //     if (event.target == modal) {
-            //         modal.style.display = "none";
-            //     }
-            // }
+            getAssign();
+            getGradeHistory(); // Takes the longest
         }
     }
 
@@ -57,12 +46,8 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
         const username = document.querySelector('[data-username]').getAttribute('data-username');
         const campus = document.querySelector('[data-campus]').getAttribute('data-campus');
 
-        // document.getElementById('chart-academic').nextElementSibling.removeAttribute('hidden');
         document.getElementById("overlay").style.display = "flex";
-        //document.querySelector('.card-body-academic-info').firstElementChild.style.display = "flex";
-        // document.querySelector('.card-img-attendance').firstElementChild.style.display = "flex";
         document.querySelector('.card-img-academic').firstElementChild.style.display = "flex";
-
 
         Ajax.call([{
             methodname: 'report_mystudent_get_grade_effort_trend',
@@ -74,7 +59,7 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             done: function (response) {
                 const htmlResult = response.result;
                 Log.debug(htmlResult);
-
+               
                 if (campus == 'Senior') {
                     trendChartSenior(htmlResult);
                 } else {
@@ -85,97 +70,106 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             fail: function (reason) {
                 Log.debug(reason);
                 // remove spinner
-                //document.querySelector('.card-body-academic-info').firstElementChild.style.display = "none";
                 document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
+                $('#card-body-academic-info-text').replaceWith('<p class="card-text alert alert-danger" id ="card-body-academic-info-text" >Data not available. Please try later</p>');
             }
         }]);
 
     };
 
     function trendChartSenior(result) {
-        const ctx = document.getElementById("chart-academic");
-        if (!ctx) {
-            return;
+        Y.log("RESULT");
+        Y.log(result == null);
+        const isEmpty = result == null || Object.keys(result).length === 0;
+        if (isEmpty) {
+            document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
+            $('#card-body-academic-info-text').replaceWith('<p class="card-text alert alert-danger" id ="card-body-academic-info-text" >Data not available.</p>');
+        } else {
+
+            const ctx = document.getElementById("chart-academic");
+            if (!ctx) {
+                return;
+            }
+    
+            const performance = JSON.parse(result);
+            let labels = [];
+            let sets = [];
+            let attendance = [];
+            let effort = [];
+            let grades = [];
+            let gradeperterm = [];
+    
+            const TAGS = {
+                avgattendance: 'Average Attendance',
+                avgeffort: 'Average Effort',
+                avggrades: 'Average Grade',
+            }
+    
+            for (let i = 0; i < performance.length; i++) {
+                var p = performance[i];
+    
+                const year = p.details.year.toString();
+                const term = p.details.term.toString();
+    
+                labels.push(['T' + term, year]);
+                gradeperterm.push(p.details.avggrades);
+    
+                grades.push(p.details.avggrades);
+                effort.push(p.details.avgeffort)
+                attendance.push(p.details.avgattendance)
+    
+            }
+    
+            sets.push({
+                label: TAGS.avggrades,
+                data: grades,
+                fill: false,
+                borderColor: '#31326f',
+                backgroundColor: '#31326f',
+                tension: 0.1,
+            });
+    
+            sets.push({
+                label: TAGS.avgeffort,
+                data: effort,
+                fill: false,
+                borderColor: '#ffc93c',
+                backgroundColor: '#ffc93c',
+                tension: 0.1
+            });
+    
+            sets.push({
+                label: TAGS.avgattendance,
+                data: attendance,
+                fill: false,
+                borderColor: '#1687a7',
+                backgroundColor: '#1687a7',
+                tension: 0.1
+            });
+    
+    
+            const data = {
+                labels: labels,
+                datasets: sets
+            };
+    
+            const options = {
+                responsive: true,
+                maintainAspectRatio: false,
+    
+            }
+    
+            // remove spinner
+            document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
+    
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: data,
+                options: options,
+    
+            });
         }
 
-        const performance = JSON.parse(result);
-        let labels = [];
-        let sets = [];
-        let attendance = [];
-        let effort = [];
-        let grades = [];
-        let gradeperterm = [];
-
-        const TAGS = {
-            avgattendance: 'Average Attendance',
-            avgeffort: 'Average Effort',
-            avggrades: 'Average Grade',
-        }
-
-        for (let i = 0; i < performance.length; i++) {
-            var p = performance[i];
-
-            const year = p.details.year.toString();
-            const term = p.details.term.toString();
-
-            labels.push(['T' + term, year]);
-            gradeperterm.push(p.details.avggrades);
-
-            grades.push(p.details.avggrades);
-            effort.push(p.details.avgeffort)
-            attendance.push(p.details.avgattendance)
-
-        }
-
-        sets.push({
-            label: TAGS.avggrades,
-            data: grades,
-            fill: false,
-            borderColor: '#31326f',
-            backgroundColor: '#31326f',
-            tension: 0.1,
-        });
-
-        sets.push({
-            label: TAGS.avgeffort,
-            data: effort,
-            fill: false,
-            borderColor: '#ffc93c',
-            backgroundColor: '#ffc93c',
-            tension: 0.1
-        });
-
-        sets.push({
-            label: TAGS.avgattendance,
-            data: attendance,
-            fill: false,
-            borderColor: '#1687a7',
-            backgroundColor: '#1687a7',
-            tension: 0.1
-        });
-
-
-        const data = {
-            labels: labels,
-            datasets: sets
-        };
-
-        const options = {
-            responsive: true,
-            maintainAspectRatio: false,
-
-        }
-
-        // remove spinner
-        // document.querySelector('.card-body-academic-info').firstElementChild.style.display = "none";
-        document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
-
-        var myLineChart = new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: options,
-
-        });
     }
 
     function trendChartPrimary(result) {
@@ -574,6 +568,38 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
 
     }
 
+    function getAssign() {
+        const element = document.querySelector('.cgs-dashboard-academic-info-container');
+        const username = element.getAttribute('data-username');
+
+        // Add spinner.
+        $('#assignment-tb').removeAttr('hidden');
+
+        Ajax.call([{
+            methodname: 'report_mystudent_get_assign_context',
+            args: {
+                username: username
+            },
+
+            done: function (response) {
+                const htmlResult = response.html;
+                $('#assignment-tb').attr('hidden', true);
+                $('[data-region="assignment-table"]').replaceWith(htmlResult);
+
+            },
+
+            fail: function (reason) {
+                Log.error('report_mystudent: Unable to get context.');
+                Log.debug(reason);
+                $('#assignment-tb').attr('hidden', true);
+                $('[data-region="assignment-table"]').replaceWith('<p class="alert alert-danger">Data not available. Please try later</p>');
+            }
+        }]);
+
+
+    }
+
+
     function popup(e) {
         var container;
         var modalcontainer;
@@ -600,9 +626,6 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             document.querySelector('.pop-up-effort.fa-window-close').addEventListener('click', closePopup);
             document.querySelector('.pop-up-effort').removeEventListener('click', popup);
         }
-
-
-
     }
 
     function closePopup(e) {
@@ -626,6 +649,45 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
         document.querySelector('.pop-up-grade').addEventListener('click', popup);
         document.querySelector('.pop-up-effort').addEventListener('click', popup);
     }
+
+
+    // function popupfeedback(e) {
+    //     Y.log("popupfeedback");
+    //     Y.log(e);
+    //     e.target.classList.remove('fa-external-link');
+    //     e.target.classList.add('fa-window-close');
+    //     e.target.setAttribute('title', 'Close');
+
+
+    //     const container = e.target.closest('div.feedbackcomment-modal');
+    //     const containerContact = e.target.closest('div.feedbackcomment-modal-content');
+
+    //     container.classList.add('modal-history-background');
+    //     containerContact.classList.add('modal-history-content');
+    //     containerContact.classList.add('feedbackcomment-modal-content-expanded');
+
+    //     e.target.removeEventListener('click', popupfeedback);
+    //     e.target.addEventListener('click', popupfeedbackclose);
+
+    // }
+
+    // function popupfeedbackclose(e) {
+    //     e.target.classList.add('fa-external-link');
+    //     e.target.classList.remove('fa-window-close');
+    //     e.target.setAttribute('title', 'Open');
+
+    //     const container = e.target.closest('div.feedbackcomment-modal');
+    //     const containerContact = e.target.closest('div.feedbackcomment-modal-content');
+
+
+    //     container.classList.remove('modal-history-background');
+    //     containerContact.classList.remove('modal-history-content');
+    //     containerContact.classList.remove('feedbackcomment-modal-content-expanded');
+
+
+    //     e.target.addEventListener('click', popupfeedback);
+    //     e.target.removeEventListener('click', popupfeedbackclose);
+    // }
 
     return {
         init: init

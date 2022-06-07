@@ -21,10 +21,11 @@
  */
 
 use function report_mystudent\academic_info\get_template_context;
+use function report_mystudent\assignments_report\get_assign_template_context;
+use function report_mystudent\assignments_report\get_cgs_connect_activities_context;
+use function report_mystudent\assignments_report\get_rubric;
 use function report_mystudent\attendance\get_data;
 use function report_mystudent\grades_effort\get_templates_contexts;
-use function report_mystudent\naplan\get_template_contexts;
-
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,11 +33,12 @@ require_once($CFG->dirroot . '/report/mystudent/classes/attendancemanager.php');
 require_once($CFG->dirroot . '/report/mystudent/classes/naplanmanager.php');
 require_once($CFG->dirroot . '/report/mystudent/classes/gradeseffortmanager.php');
 require_once($CFG->dirroot . '/report/mystudent/classes/academicinfonamager.php');
+require_once($CFG->dirroot . '/report/mystudent/classes/assignmentsmanager.php');
 
 class report_mystudent_renderer extends plugin_renderer_base {
-    
+
     public function __construct(moodle_page $page, $target) {
-       
+
         parent::__construct($page, $target);
     }
 
@@ -46,9 +48,9 @@ class report_mystudent_renderer extends plugin_renderer_base {
         global $CFG, $DB;;
 
         $profileuser = $DB->get_record('user', ['id' => $id]);
-       
+
         profile_load_custom_fields($profileuser);
-        
+
         $isSenior = strpos(strtolower($profileuser->profile['CampusRoles']), 'senior');
         $data = new stdClass();
 
@@ -57,67 +59,63 @@ class report_mystudent_renderer extends plugin_renderer_base {
         $data->campus = is_bool($isSenior) ? 'Primary' : 'Senior';
 
         $data->attsrc =  new moodle_url($CFG->wwwroot . '/report/mystudent/pix/attendance.png');
-        $data->att =  get_string('attendance','report_mystudent');
-        $data->atturl = new moodle_url('/report/mystudent/view.php',['report' => 'attendance', 'id' => $id]);
-       
+        $data->att =  get_string('attendance', 'report_mystudent');
+        $data->atturl = new moodle_url('/report/mystudent/view.php', ['report' => 'attendance', 'id' => $id]);
+
         $data->gestr =  new moodle_url($CFG->wwwroot . '/report/mystudent/pix/marking.png');
-        $data->geurl = new moodle_url('/report/mystudent/view.php',['report' => 'gradeandeffort', 'id' => $id]);
+        $data->geurl = new moodle_url('/report/mystudent/view.php', ['report' => 'gradeandeffort', 'id' => $id]);
 
         $data->academic = new moodle_url($CFG->wwwroot . '/report/mystudent/pix/education.png');
-        $data->acc =  get_string('academicinfo','report_mystudent');
-        $data->accurl =  new moodle_url('/report/mystudent/view.php',['report' => 'academic', 'id' => $id]);
-       
+        $data->acc =  get_string('academicinfo', 'report_mystudent');
+        $data->accurl =  new moodle_url('/report/mystudent/view.php', ['report' => 'academic', 'id' => $id]);
+
         $data->naplan = new moodle_url($CFG->wwwroot . '/report/mystudent/pix/naplogo.jpg');
-        $data->nap = get_string('naplan','report_mystudent');
-        $data->napurl = new moodle_url('/report/mystudent/view.php',['report' => 'naplan', 'id' => $id]);
+        $data->nap = get_string('naplan', 'report_mystudent');
+        $data->napurl = new moodle_url('/report/mystudent/view.php', ['report' => 'naplan', 'id' => $id]);
 
         $data->currentyear = date("Y");
         echo $this->render_from_template('report_mystudent/cgsdashboard', $data);
-
     }
 
     public function report_attendance($id) {
         global $DB;
-        $profileuser = $DB->get_record('user', ['id' =>$id]);
+        $profileuser = $DB->get_record('user', ['id' => $id]);
         $data =  get_data($profileuser);
 
         echo  $this->render_from_template('report_mystudent/attendance/main', $data);
     }
 
-    public function report_naplan($id) {
-        global $DB;
-        $profileuser = $DB->get_record('user', ['id' => $id]);
-        $data = get_template_contexts($profileuser->username);
-        
-        return $data;
-        //echo  $this->render_from_template('report_mystudent/naplan/main', $data);
-    }
+    // Collect the data for: Grade report, grade and effort history and assignments
 
-    public function report_grades_effort($id){
-        $data = get_templates_contexts($id);
-    
-        echo $this->render_from_template('report_mystudent/gradesandeffort/main', $data);
-    }
-
-    // Get the grade reports to conver to PDF
-    public function report_grades($studentid, $currentuserid) {
+    public function report_academic($studentid, $currentuserid) {
         global $DB, $USER;
 
-        
+
         $ids = [$studentid, $currentuserid];
         list($insql, $inparams) = $DB->get_in_or_equal($ids);
         $sql = "SELECT id, username FROM {user} WHERE id $insql";
         $users = $DB->get_records_sql($sql, $inparams);
-       
+        $extras = new stdClass();
         if (is_siteadmin($USER)) {
             $data = get_template_context($users[$studentid]->username, $users[$studentid]->username);
         } else {
             $data = get_template_context($users[$studentid]->username, $users[$currentuserid]->username);
         }
-     //   print_object($data); 
-       // $data = get_templates_contexts($studentid);
-        $data = array_merge($data, get_templates_contexts($studentid));
-      // print_object($data);exit;
-        echo $this->render_from_template('report_mystudent/gradesandeffort/academic_reports', $data);
+        $data['noreports']= count($data) == 0;
+       
+        $assessdata = get_assign_template_context($users[$studentid]->username);
+        $extras->noassesssumary =  count($assessdata) == 0;
+        $gradesandeffortdata = get_templates_contexts($studentid);
+        $cgsactivity = get_cgs_connect_activities_context($studentid);
+        $extras->noassesssumary =  count($cgsactivity) == 0;
+       
+        $data = array_merge($data, $gradesandeffortdata, $assessdata, $cgsactivity);
+        $data['noassesssumary']= count($assessdata) == 0;
+        $data['noconnectassess']=  count($cgsactivity) == 0;
+       
+        // Collect the moodle assesments
+        
+        echo $this->render_from_template('report_mystudent/academic/academic_main', $data);
     }
-} 
+    
+}

@@ -75,10 +75,10 @@ trait get_grade_history {
 
         switch ($campus) {
             case 'Primary':
-                $html =  $renderer->render_from_template('report_mystudent/gradesandeffort/grades_history_primary', $ctx);
+                $html =  $renderer->render_from_template('report_mystudent/academic/academic_grades_history_primary', $ctx);
                 break;
             case 'Senior':
-                $html =  $renderer->render_from_template('report_mystudent/gradesandeffort/grades_history_senior', $ctx);
+                $html =  $renderer->render_from_template('report_mystudent/academic/academic_grades_history_senior', $ctx);
                 break;
             default:
                 $html =  get_string('nodataavailable', 'report_mystudent');

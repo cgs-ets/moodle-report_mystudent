@@ -37,4 +37,5 @@ class api extends external_api
     use get_grade_effort_trend;
     use get_attendance_by_term;
     use get_student_academic_report;
+    use get_assign_context;
 }

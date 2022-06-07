@@ -24,28 +24,33 @@ along with Moodle. If not, see
 <div class = "cgs-dashboard-academic-info-container" data-username= "{{username}}" data-instanceid="{{instanceid}}" data-userid="{{userid}}" data-campus="{{campus}}">
    <div class = "cgs-dashboard-academic-report-container">
       <h3>Academic reports</h3>
-      <input type="text" id="searchReportInput"  placeholder="Search for year..">
-      <br><br>
-      <table id = "reports-table" class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar" >
-         <thead>
-            <tr class="attheader">
-               <th style="width:70%;">{{#str}} description, report_mystudent {{/str}}</th>
-               <th style="width:10%;">{{#str}} viewreport, report_mystudent {{/str}}</th>
-               <th style="width:20%;">{{#str}} createddate, report_mystudent {{/str}}</th>
-            </tr>
-         </thead>
-         <tbody class="ac-rep-tbody ">
-            {{#reports}}
-            <tr >
-               <td class="view-report">{{description}}</td>
-               <td class="text-center view-report"> 
-                  <img data-tdss="{{tdocumentsseq}}" class ="file-pdf" src="{{icon}}" alt="view report">
-               </td>
-               <td>{{documentcreateddate}}</td>
-            </tr>
-            {{/reports}}
-         </tbody>
-      </table>
+            <input type="text" id="searchReportInput"  placeholder="Search for year..">
+            <br><br>
+        {{^noreports}}
+            <table id = "reports-table" class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar" >
+                <thead>
+                    <tr class="attheader">
+                    <th style="width:70%;">{{#str}} description, report_mystudent {{/str}}</th>
+                    <th style="width:10%;">{{#str}} viewreport, report_mystudent {{/str}}</th>
+                    <th style="width:20%;">{{#str}} createddate, report_mystudent {{/str}}</th>
+                    </tr>
+                </thead>
+                <tbody class="ac-rep-tbody ">
+                    {{#reports}}
+                    <tr >
+                    <td class="view-report">{{description}}</td>
+                    <td class="text-center view-report"> 
+                        <img data-tdss="{{tdocumentsseq}}" class ="file-pdf" src="{{icon}}" alt="view report">
+                    </td>
+                    <td>{{documentcreateddate}}</td>
+                    </tr>
+                    {{/reports}}
+                </tbody>
+            </table>
+        {{/noreports}}
+
+        {{#noreports}} Data not available {{/noreports}}
+      
    </div>
     <div class = "cgs-grade-main-container">
         <div class = "cgs-grade-history-container">
@@ -75,7 +80,25 @@ along with Moodle. If not, see
         </div>
     </div>
 
-    <div class =  "cgs-assignments-container"></div>
+    <div class = "cgs-assignments-container">
+        <div>
+            <h3 >{{#str}} assig_report, report_mystudent {{/str}}</h3>
+            <div class='spinner-border  text-primary' id="assignment-tb" hidden>
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div data-region="assignment-table"></div>
+        </div>
+        <br>
+        <div>
+         <h3>CGS Connect activity</h3>
+            {{^noconnectassess}}
+                {{> report_mystudent/academic/academic_cgs_activities}}
+            {{/noconnectassess}}
+
+            {{#noconnectassess}} Data not available{{/noconnectassess}}
+
+        </div>
+    </div>
 </div>
 
 
