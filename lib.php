@@ -29,17 +29,17 @@ defined('MOODLE_INTERNAL') || die;
 
 function report_report_mystudent_extend_navigation_user($navigation, $user, $course) {
 
-    if (report_mystudent_can_access_user_report($user, $course)) {
+    //if (report_mystudent_can_access_user_report($user, $course)) {
         $url = new moodle_url('/report/mystudent/index.php', array('id' => $user->id, 'course' => $course->id));
         $navigation->add(get_string('heading', 'report_mystudent'), $url);
-    }
+   // }
 }
 
 /**
  * Only the student parent, admin and teacher can see this report
  */
 function report_mystudent_can_access_user_report($user) {
-    return true; // TODO
+    return false; // TODO
 }
 
 /**

@@ -42,7 +42,21 @@ $navigationinfo = array(
 
 $PAGE->add_report_nodes($USER->id, $navigationinfo);
 // Now set the heading.
+if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
 
+    // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
+    $struser = get_string('user');
+    $PAGE->set_context(context_system::instance());
+    $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
+    $PAGE->set_heading($struser);
+    $PAGE->set_pagelayout('mypublic');
+    $PAGE->set_url('/user/profile.php', array('id' => $id));
+    $PAGE->navbar->add($struser);
+    echo $OUTPUT->header();
+    echo $OUTPUT->notification(get_string('usernotavailable', 'error'));
+    echo $OUTPUT->footer();
+    exit;
+}
 $heading = $USER->id == $id ? get_string('mydashboard', 'report_mystudent') : get_string('studentdashboard', 'report_mystudent', $userrec);
 $PAGE->set_heading($heading);
 

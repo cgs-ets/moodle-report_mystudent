@@ -146,7 +146,7 @@ function get_assessments_by_course($userid) {
     global $DB;
     $assessmentids = implode(',', array_column(get_assessment_submission_records($userid), 'assignment'));
     $result = [];
-
+  
     if ($assessmentids != '') {
         $sql = "SELECT grades.id as gradeid, u.id as userid, u.firstname, u.lastname, c.id as courseid, c.shortname as coursename, grades.assignment as assignmentid, assign.name as 'assignmentname', assign.duedate
                 FROM {assign_grades} AS grades
@@ -177,7 +177,7 @@ function get_assessment_submission_records($userid, $cid = null, $asid = null) {
     } else {
         $assignids = $asid;
     }
-
+    
     $sql = "SELECT * FROM {assign} AS assign
             JOIN {assign_submission} AS asub
             ON asub.assignment = assign.id
