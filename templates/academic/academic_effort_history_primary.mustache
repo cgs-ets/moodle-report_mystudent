@@ -21,15 +21,10 @@
     
     }}
   
-    <div class="table-responsive ">
-
-        <table class="table table-bordered">
-        <h3 class="text-center"><bold>{{studentname}}</bold></h3>
-        <br>
+    <table id = "effort-history-table" class="cgs-dashboard-gandeffort-table effort-history-table">
         <thead> 
             <tr class="reports-heading">
-                <th colspan=""></th>
-                
+                <th >Learning Area</th>
                 {{#years}}
                   <th colspan="2">{{year}} </th>               
                 {{/years}}
@@ -67,7 +62,7 @@
                     {{#grades}}
                         {{#assesmentgrades}}
 
-                        <td { style="text-align: center; background-color: {{bgcolour}}; "
+                        <td style="text-align: center; background-color: {{bgcolour}}; "
                             data-toggle="tooltip" data-placement="bottom" title = "{{grade}}">
                             {{ibscale}}
                         </td>
@@ -81,9 +76,5 @@
           
             {{/learningareas}}
             
-        
-           
-       
         </tbody>
     </table>
-    </div>

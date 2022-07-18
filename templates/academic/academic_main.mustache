@@ -35,7 +35,7 @@ along with Moodle. If not, see
                     <th style="width:20%;">{{#str}} createddate, report_mystudent {{/str}}</th>
                     </tr>
                 </thead>
-                <tbody class="ac-rep-tbody ">
+                <tbody class="ac-rep-tbody">
                     {{#reports}}
                     <tr >
                     <td class="view-report">{{description}}</td>
@@ -57,7 +57,7 @@ along with Moodle. If not, see
             <div class = "grades-his">
                 <h3 class = "history-title">Grades history </h3><span><i class="fa fa-external-link fa-lg  pop-up-history pop-up-grade" aria-hidden="true" title = "Expand" disabled></i></span>
                 <input type="text" id="searchByClassGradeInput"  placeholder="Search for class..">
-                <br><br>
+                <br>
                 <div class='spinner-border  text-primary' id="grade-history-tb" hidden>
                 <span class="sr-only">Loading...</span>
                 </div>        
@@ -79,26 +79,27 @@ along with Moodle. If not, see
             </div>
         </div>
     </div>
-
-    <div class = "cgs-assignments-container">
-        <div>
-            <h3 >{{#str}} assig_report, report_mystudent {{/str}}</h3>
-            <div class='spinner-border  text-primary' id="assignment-tb" hidden>
-                <span class="sr-only">Loading...</span>
+    {{^primary}} 
+        <div class = "cgs-assignments-container">
+            <div>
+                <h3 >{{#str}} assig_report, report_mystudent {{/str}}</h3>
+                <div class='spinner-border  text-primary' id="assignment-tb" hidden>
+                    <span class="sr-only">Loading...</span>
+                </div>
+                <div data-region="assignment-table"></div>
             </div>
-            <div data-region="assignment-table"></div>
-        </div>
-        <br>
-        <div>
-         <h3>CGS Connect activity</h3>
-            {{^noconnectassess}}
-                {{> report_mystudent/academic/academic_cgs_activities}}
-            {{/noconnectassess}}
+            <br>
+            <div>
+            <h3>CGS Connect activity</h3>
+                {{^noconnectassess}}
+                    {{> report_mystudent/academic/academic_cgs_activities}}
+                {{/noconnectassess}}
 
-            {{#noconnectassess}} Data not available{{/noconnectassess}}
+                {{#noconnectassess}} Data not available{{/noconnectassess}}
 
+            </div>
         </div>
-    </div>
+    {{/primary}}
 </div>
 
 

@@ -21,11 +21,9 @@
     
     }}
     
-  
-
-        <table id = 'grade-history-table' class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar grade-history-table">
+<table id = 'grade-history-table' class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar grade-history-table grade-history-table-senior">
         <thead> 
-            <tr class="text-center">
+            <tr class="text-center reports-heading">
                 <th style="width: 100%;">{{#str}} classlabel, report_mystudent {{/str}}</th>
                 {{#years_grades}}
                 {{#labels}}
@@ -33,23 +31,21 @@
                 {{/labels}}
                 {{/years_grades}}
             </tr>
-    
         </thead>
         <tbody>
-            <tr class="text-center">    
-                <th></th>
+            <tr class="text-center reports-heading">    
+                <td></td>
                 {{#years_grades}}
                 {{#labels}}
                     {{#termlabels}}   
-                        <th>{{t1}}</th>
-                        <th>{{t2}}</th>
-                        <th>{{t3}}</th>  
-                        <th>{{t4}}</th>  
+                        <td>{{t1}}</td>
+                        <td>{{t2}}</td>
+                        <td>{{t3}}</td>  
+                        <td>{{t4}}</td>  
                     {{/termlabels}}
                 {{/labels}}
                 {{/years_grades}}
             </tr>
-
             
             {{#subjectdetails_grades}}
             {{#classes}}
@@ -65,4 +61,4 @@
             {{/subjectdetails_grades}}
        
         </tbody>
-    </table>
+</table>

@@ -21,11 +21,7 @@
     
     }}
   
-    <div class="table-responsive ">
-
-        <table class="table table-bordered">
-        <h3 class="text-center"><bold>{{studentname}}</bold></h3>
-        <br>
+<table id = "grade-history-table" class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar grade-history-table">
         <thead> 
             <tr class="reports-heading">
                 <th colspan=""></th>
@@ -47,10 +43,10 @@
             
             {{#learningareas}}
             {{#areas}}
-            <tr>
-                <td  class="area-heading">{{area}}</td>
+            <tr class="my-student-learning-title">
+                <td  class="my-student-dummy-area-heading" style="width: 100%;">{{area}}</td>
                 {{#dummyrows}}
-                    <td >{{dummyvalue}}</td>
+                    <td class='my-student-dummy-area-heading' >{{dummyvalue}}</td>
                 {{/dummyrows}}
               
             </tr>
@@ -58,7 +54,7 @@
           {{#assesmentdetails}} 
             {{#assesmentdets}} 
                 <tr>
-                    <td class="assess-heading">
+                    <td class="assess-heading" style="text-align: left;">
                         {{assessname}}
                     </td>
 
@@ -77,11 +73,7 @@
           {{/assesmentdetails}}
             
             {{/areas}}
-            {{/learningareas}}
-            
-        
-           
+            {{/learningareas}}       
        
         </tbody>
     </table>
-    </div>

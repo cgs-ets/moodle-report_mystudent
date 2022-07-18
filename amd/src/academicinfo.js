@@ -78,8 +78,6 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
     };
 
     function trendChartSenior(result) {
-        Y.log("RESULT");
-        Y.log(result == null);
         const isEmpty = result == null || Object.keys(result).length === 0;
         if (isEmpty) {
             document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
@@ -127,6 +125,7 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
                 borderColor: '#31326f',
                 backgroundColor: '#31326f',
                 tension: 0.1,
+                spanGaps: true
             });
     
             sets.push({
@@ -135,7 +134,8 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
                 fill: false,
                 borderColor: '#ffc93c',
                 backgroundColor: '#ffc93c',
-                tension: 0.1
+                tension: 0.1,
+                spanGaps: true
             });
     
             sets.push({
@@ -144,7 +144,8 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
                 fill: false,
                 borderColor: '#1687a7',
                 backgroundColor: '#1687a7',
-                tension: 0.1
+                tension: 0.1,
+                spanGaps: true
             });
     
     
@@ -162,7 +163,7 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             // remove spinner
             document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
     
-            var myLineChart = new Chart(ctx, {
+            new Chart(ctx, {
                 type: 'line',
                 data: data,
                 options: options,
@@ -207,71 +208,6 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             ae: 'Above expectations'
         }
 
-        // Segment helpers
-        const segments = (dataset) => {
-            let hasval = [];
-            let noval = [];
-            let segment = [];
-
-            for (let i = 0; i < dataset.length; i++) {
-
-                if (dataset[i] == undefined) {
-                    noval.push(i);
-                } else {
-                    hasval.push(i);
-                }
-
-            }
-
-            for (const index of noval) {
-                if (index > 0 && index < (dataset.length - 1)) {
-                    const seg = [getStartPoint(dataset, index), getEndPoint(dataset, index)];
-                    segment.push(seg); //start-finish segment
-                }
-            }
-
-            segment = segment.filter(function (element) {
-                return element !== undefined;
-            });
-
-
-        };
-
-        const getEndPoint = (dataset, currindex) => {
-            let flag = true;
-            let i = ++currindex;
-            while (flag && i < dataset.length) {
-
-                if (dataset[i] != undefined) {
-                    flag = false;
-                } else {
-                    i++;
-                }
-
-            }
-
-            return dataset[i];
-
-        };
-
-        const getStartPoint = (dataset, currindex) => {
-            let flag = true;
-            let i = --currindex;
-
-            while (flag && i > 0) {
-                if (dataset[i] != undefined) {
-                    flag = false;
-                } else {
-                    i--;
-                }
-
-            }
-
-            return dataset[i];
-
-
-        }
-
         for (let i = 0; i < performance.length; i++) {
             var p = performance[i];
 
@@ -297,23 +233,14 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
 
         }
 
-        const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
-        // End Segment helpers
-
-        const sgrades = segments(grades);
-        const seffort = segments(effort);
-        const sattendance = segments(attendance);
-
         sets.push({
             label: TAGS.avggrades,
             data: grades,
             fill: false,
-            borderColor: '#31326f',
-            segment: {
-                borderDash: ctx => skipped(ctx, sgrades),
-            },
+            borderColor: '#31326f',            
             backgroundColor: '#31326f',
             tension: 0.1,
+            spanGaps: true
         });
 
         sets.push({
@@ -321,11 +248,9 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             data: effort,
             fill: false,
             borderColor: '#ffc93c',
-            segment: {
-                borderDash: ctx => skipped(ctx, seffort),
-            },
             backgroundColor: '#ffc93c',
-            tension: 0.1
+            tension: 0.1,
+            spanGaps: true
         });
 
         sets.push({
@@ -333,11 +258,9 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             data: attendance,
             fill: false,
             borderColor: '#1687a7',
-            segment: {
-                borderDash: ctx => skipped(ctx, sattendance),
-            },
             backgroundColor: '#1687a7',
-            tension: 0.1
+            tension: 0.1,
+            spanGaps: true
         });
 
         const data = {
@@ -388,35 +311,22 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
             scales: {
                 y: {
                     suggestedMin: 25,
-                    display: false,
+                    display: true,
 
                 }
             }
         }
 
-        const plugin = {
-            id: 'custom_canvas_background_color',
-            beforeDraw: (chart) => {
-                const ctx = chart.canvas.getContext('2d');
-                ctx.save();
-                ctx.globalCompositeOperation = 'destination-over';
-                ctx.fillStyle = '#f6f5f5';
-                ctx.fillRect(0, 0, chart.width, chart.height);
-                ctx.restore();
-            }
-        };
+        /// remove spinner
+        document.querySelector('.card-img-academic').firstElementChild.style.display = "none";
 
-        // remove spinner
-        //document.getElementById('chart-academic').nextElementSibling.setAttribute('hidden', true);
-
-        var myLineChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: data,
             options: options,
-            plugins: [plugin],
-
         });
     }
+
 
     function filterYear() {
         // Declare variables
@@ -444,8 +354,6 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
 
     function filterByClass(e) {
         // Declare variables
-        Y.log(e);
-
         var input, filter, table, tr, td, i, txtValue;
         const inputid = e.target.id;
         input = document.getElementById(inputid); //"searchByClassInput searchByClassGradeInput"
@@ -455,10 +363,11 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
 
         // Loop through all table rows, and hide those who don't match the search query
         for (i = 1; i < tr.length; i++) {
+            var trclasslist = tr[i].classList;
+            if (trclasslist.contains('reports-heading') || trclasslist.contains('my-student-learning-title')) continue;
             td = tr[i].getElementsByTagName("td")[0];
             if (td) {
                 txtValue = td.textContent || td.innerText;
-                // const date = txtValue.split('/').pop()
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";
                 } else {
@@ -469,7 +378,7 @@ define(['jquery', 'core/log', 'report_mystudent/chart', 'core/ajax'], function (
     }
 
     function displayReportService(e) {
-        Y.log(e.target.getAttribute('data-tdss'));
+        
         const tdocumentsseq = e.target.getAttribute('data-tdss');
         Ajax.call([{
             methodname: 'report_mystudent_get_student_academic_report',

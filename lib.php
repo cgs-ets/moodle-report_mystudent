@@ -29,17 +29,8 @@ defined('MOODLE_INTERNAL') || die;
 
 function report_report_mystudent_extend_navigation_user($navigation, $user, $course) {
 
-    //if (report_mystudent_can_access_user_report($user, $course)) {
-        $url = new moodle_url('/report/mystudent/index.php', array('id' => $user->id, 'course' => $course->id));
-        $navigation->add(get_string('heading', 'report_mystudent'), $url);
-   // }
-}
-
-/**
- * Only the student parent, admin and teacher can see this report
- */
-function report_mystudent_can_access_user_report($user) {
-    return false; // TODO
+    $url = new moodle_url('/report/mystudent/index.php', array('id' => $user->id, 'course' => $course->id));
+    $navigation->add(get_string('heading', 'report_mystudent'), $url);
 }
 
 /**
@@ -52,8 +43,8 @@ function report_mystudent_can_access_user_report($user) {
  *
  * @return bool
  */
-function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
-    global $CFG, $PAGE, $USER, $SITE;
+function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree $tree, $user, $iscurrentuser) {
+    global $USER;
 
     profile_load_custom_fields($USER);
     profile_load_custom_fields($user);
@@ -62,21 +53,16 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
         return;
     }
 
-    $isprimary = strpos(strtolower($user->profile['CampusRoles']), 'primary');
+    $currentuserroles = strtolower($USER->profile['CampusRoles']);
+    $userprofileroles = strtolower($user->profile['CampusRoles']);
 
-    if(is_int($isprimary)) {
-        return;
-    }
+    $isstaff = preg_match('/(staff)/i', $currentuserroles);
+    $isparent = preg_match('/(parents)/i', $currentuserroles);
+    $isstudent = preg_match('/(Students)/i', $currentuserroles);
 
-
-    $userroles = strtolower($USER->profile['CampusRoles']);
-
-    $isstaff = preg_match('/(staff)/i', $userroles);
-    $isparent = preg_match('/(parents)/i', $userroles);
-    $isstudent = preg_match('/(Students)/i', $userroles);
+    $isuserprofilestaff = preg_match('/(staff)/i', $userprofileroles);
 
     //Check the student is senior
-
 
     // show the dashboard block
     $category = new core_user\output\myprofile\category('mystudent', get_string('reportname', 'report_mystudent'), 'contact');
@@ -88,6 +74,9 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
 
     switch ($iscurrentuser) {
         case false: // Im in a profile that is not mine
+            if ($isuserprofilestaff) {
+                return;
+            }
             if (($isstaff && $isparent) || ($isstaff && !$isparent)) { // staff that is also a parent can see their child and other children profile
                 $tree->add_node($localnode);
             } else if (!$isstaff && $isparent) {
@@ -98,6 +87,7 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
             }
             break;
         case true:  // Only students can see their dashboard.
+
             if ($isstudent && $USER->id == $user->id) {
                 $localnode =  new core_user\output\myprofile\node('mystudent', 'mystudentdashboard', get_string('mydashboard', 'report_mystudent', $user), null, $dburl, '');
                 $tree->add_node($localnode);
@@ -149,11 +139,11 @@ function get_mentor($profileuserid) {
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  */
-function report_mystudent_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+function report_mystudent_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
     // Check the contextlevel is as expected - if your plugin is a block, this becomes CONTEXT_BLOCK, etc.
-    
+
     if ($context->contextlevel != CONTEXT_SYSTEM) {
-        return false; 
+        return false;
     }
 
     // Make sure the filearea is one of those used by the plugin.
@@ -171,17 +161,17 @@ function report_mystudent_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // Leave this line out if you set the itemid to null in make_pluginfile_url (set $itemid to 0 instead).
     $itemid = array_shift($args); // The first item in the $args array.
-    
+
     // Use the itemid to retrieve any relevant data records and perform any security checks to see if the
     // user really does have access to the file in question.
 
     // Extract the filename / filepath from the $args array.
     $filename = array_pop($args); // The last item in the $args array.
-    
+
     if (!$args) {
         $filepath = '/'; // $args is empty => the path is '/'
     } else {
-        $filepath = '/'.implode('/', $args).'/'; // $args contains elements of the filepath
+        $filepath = '/' . implode('/', $args) . '/'; // $args contains elements of the filepath
     }
 
     // Retrieve the file from the Files API.

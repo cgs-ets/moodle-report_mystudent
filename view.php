@@ -27,8 +27,8 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once('lib.php');
 
 $id         = required_param('id', PARAM_INT); // Userid.
-$report     = required_param('report', PARAM_TEXT); // Type of report.
-$course = optional_param('course', 0 ,PARAM_INT);
+$report     = optional_param('report','' ,PARAM_TEXT); // Type of report.
+$course     = optional_param('course', 0 ,PARAM_INT);
 $assignment = optional_param('assignment', 0 ,PARAM_INT);
 
 require_login();
@@ -38,7 +38,7 @@ $PAGE->set_context($context);
 
 if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
 
-    // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
+    // Course managers can be browsed at site level.
     $struser = get_string('user');
     $PAGE->set_context(context_system::instance());
     $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.

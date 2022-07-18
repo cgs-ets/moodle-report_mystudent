@@ -136,10 +136,11 @@
 .assignment-table tr td:first-child,
 .cgs-academic-cgs-activities tr td:first-child {
   border-left: 1px solid #66A8D8;
+  border-left: 1px solid #66A8D8;
 }
 
 .cgs-dashboard-attendance-table tr th, .cgs-dashboard-gandeffort-table tr th, .assignment-table tr th, .cgs-academic-cgs-activities tr th {
-  background: #66A8D8;
+  background: #005892;
   border-top: 1px solid #66A8D8;
   text-align: center;
   color: white;
@@ -289,7 +290,6 @@ span#attendance-based-on-rollmarking-show {
   padding: 1rem;
   -ms-grid-row: 1;
       grid-row-start: 1;
-  grid-row-end: 3;
 }
 
 .cgs-dashboard-academic-report-container .my-custom-scrollbar {
@@ -305,6 +305,10 @@ span#attendance-based-on-rollmarking-show {
 .cgs-dashboard-academic-report-container img.file-pdf {
   max-height: 25px;
   cursor: pointer;
+}
+
+#reports-table thead th {
+  background-color: #005892;
 }
 
 #searchReportInput,
@@ -328,12 +332,19 @@ span#attendance-based-on-rollmarking-show {
 }
 
 #effort-history-table {
-  height: 11rem;
+  text-align: left;
 }
 
 .grade-history-table {
   width: 100%;
-  height: 17vh;
+  height: 66vh;
+}
+
+.my-student-dummy-area-heading {
+  background-color: #005892;
+  color: white;
+  font-weight: bold;
+  border-right: 0px !important;
 }
 
 .cgs-assignments-container {
@@ -344,6 +355,10 @@ span#attendance-based-on-rollmarking-show {
   border: 1px solid gray;
   border-radius: .5rem;
   padding: 1rem;
+}
+
+.table-assignment-term-tr {
+  background-color: lightgray;
 }
 
 .history-title {
@@ -517,6 +532,12 @@ a.chart-action {
   min-width: 100%;
 }
 
+.cgs-dashboard-gandeffort-table tr.reports-heading th {
+  background-color: #005892;
+  border: 0px solid #005892;
+  /* border-top-left-radius: 58px; */
+}
+
 .assignment-table {
   min-width: 100%;
 }
@@ -530,9 +551,9 @@ a.chart-action {
 }
 
 .cgs-effort-main-container {
+  -ms-grid-column: 1;
+      grid-column-start: 1;
   grid-column-end: 3;
-  -ms-grid-column: 2;
-      grid-column-start: 2;
 }
 
 .cgs-effort-history-container {
@@ -541,6 +562,9 @@ a.chart-action {
   border: 1px solid gray;
   border-radius: .5rem;
   padding: 1rem;
+  -ms-grid-column: 1;
+      grid-column-start: 1;
+  grid-column-end: 3;
 }
 
 span#history-show {
@@ -551,10 +575,6 @@ span#effort-show {
   display: none;
 }
 
-td.area-heading {
-  background-color: #66A8D8;
-}
-
 td.assess-heading {
   text-align: right;
 }
@@ -562,6 +582,10 @@ td.assess-heading {
 tr.reports-heading {
   text-align: center;
   background-color: lightgrey;
+}
+
+tr.reports-heading th {
+  background-color: #005892;
 }
 
 .cgs-academic-cgs-activities table.feedbackfilestv tr,
@@ -609,9 +633,4 @@ tr.reports-heading {
     width: inherit;
   }
 }
-
-/*<a href="https://www.flaticon.com/free-icons/attendance" title="attendance icons">Attendance icons created by Flat Icons - Flaticon</a>*/
-/* <a href="https://www.flaticon.com/free-icons/grade" title="grade icons">Grade icons created by Smashicons - Flaticon</a> */
-/* <a href="https://www.flaticon.com/free-icons/school" title="school icons">School icons created by Freepik - Flaticon</a> */
-/* <a href="https://www.flaticon.com/free-icons/grade" title="grade icons">Grade icons created by Freepik - Flaticon</a> */
 /*# sourceMappingURL=styles.css.map */

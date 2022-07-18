@@ -146,7 +146,7 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
             }
         };
 
-        var myLineChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: data,
             options: options,
@@ -393,7 +393,7 @@ define(['jquery', 'core/ajax', 'core/log', 'report_mystudent/chart'], function (
             }
         };
 
-        var myLineChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'line',
             data: data,
             options: options,

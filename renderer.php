@@ -23,7 +23,6 @@
 use function report_mystudent\academic_info\get_template_context;
 use function report_mystudent\assignments_report\get_assign_template_context;
 use function report_mystudent\assignments_report\get_cgs_connect_activities_context;
-use function report_mystudent\assignments_report\get_rubric;
 use function report_mystudent\attendance\get_data;
 use function report_mystudent\grades_effort\get_templates_contexts;
 
@@ -74,11 +73,13 @@ class report_mystudent_renderer extends plugin_renderer_base {
         $data->napurl = new moodle_url('/report/mystudent/view.php', ['report' => 'naplan', 'id' => $id]);
 
         $data->currentyear = date("Y");
+        
         echo $this->render_from_template('report_mystudent/cgsdashboard', $data);
     }
 
     public function report_attendance($id) {
         global $DB;
+
         $profileuser = $DB->get_record('user', ['id' => $id]);
         $data =  get_data($profileuser);
 
@@ -90,17 +91,21 @@ class report_mystudent_renderer extends plugin_renderer_base {
     public function report_academic($studentid, $currentuserid) {
         global $DB, $USER;
 
-
         $ids = [$studentid, $currentuserid];
+        
         list($insql, $inparams) = $DB->get_in_or_equal($ids);
         $sql = "SELECT id, username FROM {user} WHERE id $insql";
+
         $users = $DB->get_records_sql($sql, $inparams);
+
         $extras = new stdClass();
+
         if (is_siteadmin($USER)) {
             $data = get_template_context($users[$studentid]->username, $users[$studentid]->username);
         } else {
             $data = get_template_context($users[$studentid]->username, $users[$currentuserid]->username);
         }
+
         $data['noreports']= count($data) == 0;
        
         $assessdata = get_assign_template_context($users[$studentid]->username);
@@ -110,10 +115,10 @@ class report_mystudent_renderer extends plugin_renderer_base {
         $extras->noassesssumary =  count($cgsactivity) == 0;
        
         $data = array_merge($data, $gradesandeffortdata, $assessdata, $cgsactivity);
+
         $data['noassesssumary']= count($assessdata) == 0;
         $data['noconnectassess']=  count($cgsactivity) == 0;
        
-        // Collect the moodle assesments
         
         echo $this->render_from_template('report_mystudent/academic/academic_main', $data);
     }

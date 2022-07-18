@@ -57,7 +57,9 @@ if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
     echo $OUTPUT->footer();
     exit;
 }
+
 $heading = $USER->id == $id ? get_string('mydashboard', 'report_mystudent') : get_string('studentdashboard', 'report_mystudent', $userrec);
+
 $PAGE->set_heading($heading);
 
 $PAGE->set_title(get_string('mydashboard', 'report_mystudent'));
