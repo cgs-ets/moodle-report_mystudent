@@ -261,7 +261,7 @@ span#attendance-based-on-rollmarking-show {
 // Grades and effort.
 .cgs-dashboard-academic-info-container {
     display: grid;
-    grid-template-columns: 40% auto;
+    grid-template-columns: 50%;
     row-gap: 20px;
 }
 
@@ -557,7 +557,7 @@ a.chart-action {
 .cgs-grade-history-container {
 
     // height: 35vh;
-    height: 99%;
+    height: 100%;
     overflow: hidden;
     border: 1px solid gray;
     border-radius: .5rem;
