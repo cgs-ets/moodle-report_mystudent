@@ -61,7 +61,8 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
     $isstudent = preg_match('/(Students)/i', $currentuserroles);
 
     $isuserprofilestaff = preg_match('/(staff)/i', $userprofileroles);
-
+    $isuserprofileparent = preg_match('/(parents)/i', $userprofileroles);
+    
     //Check the student is senior
 
     // show the dashboard block
@@ -74,7 +75,7 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
 
     switch ($iscurrentuser) {
         case false: // Im in a profile that is not mine
-            if ($isuserprofilestaff) {
+            if ($isuserprofilestaff || $isuserprofileparent) {
                 return;
             }
             if (($isstaff && $isparent) || ($isstaff && !$isparent)) { // staff that is also a parent can see their child and other children profile
