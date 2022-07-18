@@ -144,10 +144,10 @@ function get_templates_contexts($userid) {
     global  $DB;
     $profileuser = $DB->get_record('user', ['id' => $userid]);
     profile_load_custom_fields($profileuser);
-    $notprimary = is_numeric(strpos($profileuser->profile['CampusRoles'], 'Primary'));
-    $campus = !$notprimary ? 'Senior' : 'Primary';
+    $primary = is_numeric(strpos($profileuser->profile['CampusRoles'], 'Primary'));
+    $campus = !$primary ? 'Senior' : 'Primary';
     $context =  get_performance_trend_context($profileuser->username, $campus);
-    $urlanduserdetails = ['username' => $profileuser->username, 'campus' => $campus, 'userid' => $userid];
+    $urlanduserdetails = ['username' => $profileuser->username, 'campus' => $campus, 'userid' => $userid, 'primary' => $primary];
 
     $context = array_merge($urlanduserdetails, $context);
 
@@ -188,19 +188,27 @@ function get_template_primary_grade_history($gradesdata) {
 
 
     $ibscales = [
-        5 => ['', 'Below expectations', '#FF0000'],
-        4 => ['GS', 'Good Start', '#FFA07A'],
-        3 => ['MS', 'Making strides', '#F3FCD6'],
-        2 => ['GRWI', 'Go run with it', '#90EE90'],
-        1 => ['', 'Above expectations', '#90EE90']
+        5 => ['NY', 'Not Yet', '#D90617'],
+        4 => ['GS', 'Good Start', '#F97D01'],
+        3 => ['MS', 'Making strides', '#FFDB00'],
+        2 => ['GRWI', 'Go run with it', '#6BB82E'],
+        1 => ['FH', 'Fly High', '#00812F']
     ];
 
 
     foreach ($gradesdata as $data) {
         //Year, semester, term, learning area
         $subject = new \stdClass();
-        $subject->assessment = (strtolower($data->assessareaheading) == 'grade' ? '' : $data->assessareaheading);
-        $subject->report = $filesemesterlabel[$data->filesemester];
+        // There are some assignments that come back empty look for the description
+        if (strtolower($data->assessareaheading) == 'grade') {
+            if(strlen($data->assessareahdgabbrev1) == 0 || strtolower($data->assessareahdgabbrev1) == 'grade') {
+                $subject->assessment = $data->classdescription;
+            }
+        } else {
+            $subject->assessment =  $data->assessareaheading;
+        }
+      
+        $subject->report = isset($filesemesterlabel[$data->filesemester]) ? $filesemesterlabel[$data->filesemester] : '';
         $subject->grade = $data->assessresultdescription;
         $subject->filesemester = $data->filesemester;
         $context[$data->fileyear][$data->assessheading][$data->filesemester][] = $subject;
@@ -226,6 +234,7 @@ function get_template_primary_grade_history($gradesdata) {
             array_push($lareas, $area);
 
             foreach ($assigments as $i => $assignment) {
+                if(!isset($filesemesterlabel[$i])) $filesemesterlabel[$i] = '';
                 array_push($reports, $filesemesterlabel[$i]);
 
                 foreach ($assignment as $j => $assess) {
@@ -238,9 +247,13 @@ function get_template_primary_grade_history($gradesdata) {
                     $details->bgcolour = $ibscales[$assess->grade][2];
                     $details->filesemester = $assess->filesemester;
                     // Group by Area, assessment
+                    if(!isset($assessmenttitlesandgrades[$area])) {
+                        $assessmenttitlesandgrades[$area] = [];
+                    }
                     if (!in_array($assess->assessment,  $assessmenttitlesandgrades[$area])) {
                         $assessmenttitlesandgrades[$area][$assess->assessment][] = $details;
                         $assessmenttitlesaux[$area][$assess->assessment][$year][$assess->filesemester][] = $details;
+                        
                     }
                 }
             }
@@ -261,16 +274,11 @@ function get_template_primary_grade_history($gradesdata) {
     $minyear = array_key_first($context);
     $maxyear = array_key_last($context);
     $columnstofill = (count($context) * 2);
-
+   
     $dummygrade1 = new \stdClass();
     $dummygrade1->grade = '';
     $dummygrade1->year = '';
     $dummygrade1->filesemester = '';
-
-    $dummygrade2 = new \stdClass();
-    $dummygrade2->grade = '';
-    $dummygrade1->year = '';
-    $dummygrade2->filesemester = '4';
 
     $dummyrow = new \stdClass(); // Fill the rest of the rows of the title area i.e: English, Mathematics 
     $dummyrow->dummyvalue = '';
@@ -307,7 +315,9 @@ function get_template_primary_grade_history($gradesdata) {
                     array_push($assessments, $dummygrade1);
                 }
             }
+
             $assessments = sort_years_for_primary($assessments, $minyear, $maxyear);
+            
             foreach ($assessments as $y =>  $assessment) {
                 $grades['assesmentgrades'][] = $assessment;
             }
@@ -352,10 +362,10 @@ function sort_years_for_primary($assessments, $minyear, $maxyear) {
             if ($ce->filesemester == '4') { // We have to put a dummy grade on term 3
                 $dummygrade1->filesemester = 3;
                 array_unshift($filledyears[$i], $dummygrade1);
-            } else if ($ce->filesemester == '3') { // Dummy grade on term 4
+            } else if ($ce->filesemester == '3' || $ce->filesemester == '2') { // Dummy grade on term 4
                 $dummygrade1->filesemester = 4;
                 array_push($filledyears[$i], $dummygrade1);
-            }
+            } 
         }
         $dummygrade1->filesemester = '';
     }
@@ -368,161 +378,6 @@ function sort_years_for_primary($assessments, $minyear, $maxyear) {
     }
     return $yearsfilled;
 }
-
-/* Generate the context to display the grades by subject under a particular area. TODO: Keep here until it is decided that the new layout is better than this one.
-function get_template_primary_effort_history_old($gradesdata) {
-
-    $bgcolour[] = '';
-    foreach ($gradesdata as $data) {
-           
-        if ($data->filesemester == 3 ) {
-            $filesemesterlabel[$data->filesemester] = 'Report 2';
-        } else if ($data->filesemester == 4) {
-            $filesemesterlabel[$data->filesemester] = 'Report 3';
-        } else {
-            $filesemesterlabel[$data->filesemester] = '';
-        }
-        if ($data->assessresultsresult == 'A') {
-            $bgcolour[$data->assessresultsresult] = "#F3FCD6";          
-        } else if ($data->assessresultsresult == 'E' || $data->assessresultsresult == "VG") {
-            $bgcolour[$data->assessresultsresult] = '#90EE90';
-        }
-    }
-
-    $filesemesterlabel = array_unique($filesemesterlabel);
-    foreach ($gradesdata as $data) {
-        //Year, semester, term, learning area
-        $subject = new \stdClass();
-        $subject->assessment =  $data->classdescription;
-        $subject->report = $filesemesterlabel[$data->filesemester];
-        $subject->grade = $data->assessresultsresult;
-        $subject->title = end(explode(' ', $data->assessresultdescription));
-        $subject->bgcolour =  $bgcolour[ $subject->grade];
-        $subject->filesemester = $data->filesemester;
-        $context[$data->fileyear][$data->assessheading][$data->filesemester][] = $subject;
-        
-        
-    }
-
-
-    $years = [];
-    $assessments = [];
-    $contexts = [];
-    $lareas = [];
-    $learningareas = [];
-    $reports = [];
-    $reportsaux = [];
-    $assessmenttitlesandgrades = [];
-
-    foreach($context as $year => $subjects) {
-        
-        $y = new \stdClass();
-        $y->year = $year;
-        $years['years'][] = $y;
-
-        foreach ($subjects as $area => $assigments) {
-
-            array_push($lareas, $area);
-
-            foreach ($assigments as $i => $assignment) {
-                array_push($reports, $filesemesterlabel[$i]);
-              
-                foreach ($assignment as $j => $assess) {
-                    $details = new \stdClass();
-                    $details->assessment = $assess->assessment;
-                    $details->grade =  $assess->grade . " ($assess->title) ";
-                    $details->area = $area;
-                    $details->year = $year;
-                    $details->ibscale = $assess->grade; //The label to display
-                    $details->bgcolour = $bgcolour[$assess->grade];
-                    $details->filesemester = $assess->filesemester;
-                    // Group by Area, assessment
-                    if (!in_array($assess->assessment,  $assessmenttitlesandgrades[$area])) {
-                        $assessmenttitlesandgrades[$area][$assess->assessment][] = $details;
-                        $assessmenttitlesaux[$area][$assess->assessment][$year][$assess->filesemester][] = $details;
-                    }
-                  
-                }
-             
-            }
-        }
-    
-    }
-
-    $reports = array_slice($reports, 0, (count($context) * 2) );
-    $lareas = array_unique($lareas);
-
-    // Get the first year we have records of and the last.
-    $minyear = array_key_first($context);
-    $maxyear = array_key_last($context);
-    $columnstofill = (count($context) * 2);
-
-    $dummygrade1 = new \stdClass();
-    $dummygrade1->grade = '';
-    $dummygrade1->year = '';
-    $dummygrade1->filesemester = '';
-
-    $dummygrade2 = new \stdClass();
-    $dummygrade2->grade = '';
-    $dummygrade1->year = '';
-    $dummygrade2->filesemester = '4';
-
-    $dummyrow = new \stdClass(); // Fill the rest of the rows of the title area i.e: English, Mathematics 
-    $dummyrow->dummyvalue = '';
-    $dummyrows = [];
-  
-    for($a = 0; $a < $columnstofill; $a++) {
-        $dummyrows[] = $dummyrow;
-    }
-
-    $dummyrepo = new \stdClass();
-    $dummyrepo->report = '';
-    $reportsaux['repos'][0] = $dummyrepo;
-
-    foreach($reports as $report) {
-        $repo = new \stdClass();
-        $repo->report = $report;
-        $reportsaux['repos'][] = $repo;
-    }
-  
-    foreach ($lareas as $area) {
-        $la = new \stdClass();
-        $la->area = $area;
-        $la->dummyrows =$dummyrows;
-        $assesmentdetails = [];
-        
-        foreach ($assessmenttitlesandgrades[$area] as $assessname => $assessments) {
-            $gradesdetails = new \stdClass();
-            $gradesdetails->assessname = $assessname;
-            $grades = [];
-
-            if (count($assessments) < $columnstofill) { 
-                $tofill = $columnstofill - count($assessments);
-                for($i = 0; $i < $tofill; $i++) {
-                    array_push($assessments, $dummygrade1);
-                }
-
-            }
-           $assessments = sort_years_for_primary($assessments, $minyear, $maxyear);
-            foreach ($assessments as $y =>  $assessment) {
-                $grades['assesmentgrades'][] = $assessment;
-            }
-
-            $gradesdetails->grades = $grades;
-            $assesmentdetails['assesmentdets'][] = $gradesdetails;
-            $la->assesmentdetails = $assesmentdetails;
-        }
-        
-        $learningareas['areas'][] = $la;
-    }
-
-    $contexts = [
-        'yearlabels' => $years,
-        'reports' => $reportsaux,       
-        'learningareas' => $learningareas,
-    ];
-  return $contexts;
-}*/
 
 function get_template_primary_effort_history($gradesdata) {
 
@@ -538,9 +393,9 @@ function get_template_primary_effort_history($gradesdata) {
             $filesemesterlabel[$data->filesemester] = '';
         }
         if ($data->assessresultsresult == 'A') {
-            $bgcolour[$data->assessresultsresult] = "#F3FCD6";
+            $bgcolour[$data->assessresultsresult] = "#FFDB00";
         } else if ($data->assessresultsresult == 'E' || $data->assessresultsresult == "VG") {
-            $bgcolour[$data->assessresultsresult] = '#90EE90';
+            $bgcolour[$data->assessresultsresult] = '#6BB82E';
         }
     }
 
@@ -553,7 +408,8 @@ function get_template_primary_effort_history($gradesdata) {
         $subject->assessment =  $data->classdescription;
         $subject->report = $filesemesterlabel[$data->filesemester];
         $subject->grade = $data->assessresultsresult;
-        $subject->title = end(explode(' ', $data->assessresultdescription));
+        $temp = explode(' ', $data->assessresultdescription);        
+        $subject->title = $temp[0] != 'VG' ? $temp[1] : 'Very Good';
         $subject->bgcolour =  $bgcolour[$subject->grade];
         $subject->filesemester = $data->filesemester;
         $context[$data->assessheading][$data->fileyear][$data->filesemester][] = $subject;

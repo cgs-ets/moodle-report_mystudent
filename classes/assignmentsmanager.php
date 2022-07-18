@@ -23,18 +23,16 @@
 
 namespace report_mystudent\assignments_report;
 
-use context_system;
-use html_writer;
 use moodle_url;
-use renderable;
 
 /**
  * Returns the context for the template
  * @return array
  */
 
-// Get the assignments info that is set in Synergetic. It has all the summary
+// Get the assignments info that is set in Synergetic. It has all the summary.
 function get_assign_template_context($username) {
+
     $assignments = get_assignment_context($username);
 
     return $assignments;
@@ -54,14 +52,13 @@ function get_assignment_context($username) {
 
         $assignmentsummary = new \stdClass();
         $assignmentsummary->heading = $result->heading;
-        $assignmentsummary->result =  $result->result;
+        $assignmentsummary->result = $result->result;
         $assignmentsummary->outof = $result->markoutof;
         $assignmentsummary->classdescription = $result->classdescription;
         $assignmentsummary->weighting = (floatval(round($result->weightingfactor, 2))) * 100;
         $assignmentsummary->testdate = (new \DateTime($result->testdate))->format('d/m/Y');
         $assessments[$result->term][$result->weeknumber][] = $assignmentsummary;
     }
-
 
     $dummycell = new \stdClass();
     $dummycell->t = '';
@@ -91,7 +88,7 @@ function get_assignment_context($username) {
 }
 
 /**
- * Call to the SP 
+ * Call to the SP.
  */
 function get_assignments_by_student_id($username) {
 
@@ -100,10 +97,10 @@ function get_assignments_by_student_id($username) {
         $config = get_config('report_mystudent');
 
         // Last parameter (external = true) means we are not connecting to a Moodle database.
-        $externalDB = \moodle_database::get_driver_instance($config->dbtypeassign, 'native', true);
+        $externaldb = \moodle_database::get_driver_instance($config->dbtypeassign, 'native', true);
 
-        // Connect to external DB
-        $externalDB->connect($config->dbhost, $config->dbuserassign, $config->dbpassassign, $config->dbnameassign, '');
+        // Connect to external DB.
+        $externaldb->connect($config->dbhost, $config->dbuserassign, $config->dbpassassign, $config->dbnameassign, '');
 
         $sql = 'EXEC ' . $config->dbspassignments . ' :id';
 
@@ -111,7 +108,7 @@ function get_assignments_by_student_id($username) {
             'id' => $username,
         );
 
-        $assignments = $externalDB->get_records_sql($sql, $params);
+        $assignments = $externaldb->get_records_sql($sql, $params);
 
         return $assignments;
     } catch (\Exception $ex) {
@@ -119,10 +116,7 @@ function get_assignments_by_student_id($username) {
     }
 }
 
-
-// Get Moodle's assessments
-
-// Get the courses id this student is part of
+// Get the courses id this student is part of.
 function get_student_enrollments($userid, $idonly = true) {
     global $DB;
     $now = new \DateTime("now", \core_date::get_server_timezone_object());
@@ -132,7 +126,7 @@ function get_student_enrollments($userid, $idonly = true) {
             FROM mdl_user_enrolments ue
             INNER JOIN mdl_enrol e ON ue.enrolid = e.id
             INNER JOIN mdl_course c ON c.id = e.courseid
-            WHERE userid = $userid and e.status = 0 and c.idnumber like '%2022%'";
+            WHERE userid = $userid and e.status = 0 and c.idnumber like '%$year%'"; //TODO: make it dinamic.
 
 
     $params_array = ['userid' => $userid, 'idnumber' => $year];
@@ -146,7 +140,7 @@ function get_assessments_by_course($userid) {
     global $DB;
     $assessmentids = implode(',', array_column(get_assessment_submission_records($userid), 'assignment'));
     $result = [];
-  
+
     if ($assessmentids != '') {
         $sql = "SELECT grades.id as gradeid, u.id as userid, u.firstname, u.lastname, c.id as courseid, c.shortname as coursename, grades.assignment as assignmentid, assign.name as 'assignmentname', assign.duedate
                 FROM {assign_grades} AS grades
@@ -164,7 +158,7 @@ function get_assessments_by_course($userid) {
     return $result;
 }
 
-// Get the assesments from the courses this student is part of
+// Get the assesments from the courses this student is part of.
 
 function get_assessment_submission_records($userid, $cid = null, $asid = null) {
     global $DB;
@@ -177,7 +171,7 @@ function get_assessment_submission_records($userid, $cid = null, $asid = null) {
     } else {
         $assignids = $asid;
     }
-    
+
     $sql = "SELECT * FROM {assign} AS assign
             JOIN {assign_submission} AS asub
             ON asub.assignment = assign.id
@@ -197,8 +191,6 @@ function get_assessment_submission_records($userid, $cid = null, $asid = null) {
     return $results;
 }
 
-
-
 function get_course_module($courseid, $assessids) {
     global $DB;
 
@@ -216,7 +208,6 @@ function get_cgs_connect_activities_context($userid) {
     $assessments = get_assessments_by_course($userid);
     $data = [];
 
-
     foreach ($assessments as $assess) {
         $userassessment = new \stdClass();
         $userassessment->coursename =  $assess->coursename;
@@ -233,8 +224,7 @@ function get_cgs_connect_activities_context($userid) {
         $userassessment->duedate =  userdate($assess->duedate, get_string('strftimedatefullshort', 'core_langconfig'));
 
         $data['assign'][] = $userassessment;
-
     }
-    
+
     return $data;
 }

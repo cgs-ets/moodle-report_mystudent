@@ -31,24 +31,23 @@ namespace report_mystudent\academic_info;
 
 function get_template_context($studentusername, $mentorusername) {
     global $CFG;
-    $reports = get_student_academic_reports($studentusername, $mentorusername);    
+    $reports = get_student_academic_reports($studentusername, $mentorusername);
     $data = [];
-    
+
     foreach ($reports as $report) {
         $repo = new \stdClass();
         $repo->description = $report->description;
         $repo->documentcreateddate = (new  \DateTime($report->documentcreateddate))->format("d/m/Y");;
         $repo->tdocumentsseq = $report->tdocumentsseq;
         $repo->icon = new \moodle_url($CFG->wwwroot . '/report/mystudent/pix/acrobat.png');
-      
+
         $data['reports'][] = $repo;
-      
     }
     return $data;
 }
 
 /**
- * Call to the SP 
+ * Call to the SP
  */
 function get_student_academic_reports($studentusername, $mentorusername) {
     $docreports = [];
@@ -57,10 +56,10 @@ function get_student_academic_reports($studentusername, $mentorusername) {
         $config = get_config('report_mystudent');
 
         // Last parameter (external = true) means we are not connecting to a Moodle database.
-        $externalDB = \moodle_database::get_driver_instance($config->dbtypeacademicreport, 'native', true);
+        $externaldb = \moodle_database::get_driver_instance($config->dbtypeacademicreport, 'native', true);
 
         // Connect to external DB.
-        $externalDB->connect($config->dbhostacademicreport, $config->dbuseracademicreport, $config->dbpassacademicreport, $config->dbnameacademicreport, '');
+        $externaldb->connect($config->dbhostacademicreport, $config->dbuseracademicreport, $config->dbpassacademicreport, $config->dbnameacademicreport, '');
 
         $sql = 'EXEC ' . $config->dbspstudentreportdocs . ':studentid, :userid';
         $params = array(
@@ -68,9 +67,9 @@ function get_student_academic_reports($studentusername, $mentorusername) {
             'userid' => $mentorusername
         );
 
-        $docreports = $externalDB->get_records_sql($sql, $params);
-        
+        $docreports = $externaldb->get_records_sql($sql, $params);
     } catch (\Exception $ex) {
+        debugging($ex->getMessage());
     }
 
     return $docreports;
@@ -79,14 +78,14 @@ function get_student_academic_reports($studentusername, $mentorusername) {
 function get_student_academic_report_file($tdocumentsseq) {
     $config = get_config('report_mystudent');
     // Last parameter (external = true) means we are not connecting to a Moodle database.
-    $externalDB = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
+    $externaldb = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
     // Connect to external DB.
-    $externalDB->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
+    $externaldb->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
 
     $sql = 'EXEC ' . $config->dbspsretrievestdreport . ':tdocumentsseq';
     $params = array('tdocumentsseq' => intval($tdocumentsseq));
 
-    $documents = $externalDB->get_records_sql($sql, $params);
+    $documents = $externaldb->get_records_sql($sql, $params);
     $document = reset($documents);
 
     return $document->document;
