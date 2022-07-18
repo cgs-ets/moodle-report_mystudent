@@ -172,6 +172,10 @@ function get_assessment_submission_records($userid, $cid = null, $asid = null) {
         $assignids = $asid;
     }
 
+    if(strlen($assignids) == 0) { // Moodle 4 throws an error.
+        return;
+    }
+
     $sql = "SELECT * FROM {assign} AS assign
             JOIN {assign_submission} AS asub
             ON asub.assignment = assign.id
