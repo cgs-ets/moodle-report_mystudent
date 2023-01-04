@@ -15,6 +15,10 @@
   border-radius: 100%;
 }
 
+.report_mystudent .pagelayout-standard #page.drawers .main-inner, body.limitedwidth #page.drawers .main-inner {
+  max-width: 100% !important;
+}
+
 @-webkit-keyframes rotation {
   from {
     -webkit-transform: rotate(0deg);
@@ -282,6 +286,10 @@ span#attendance-based-on-rollmarking-show {
   }
 }
 
+.chart {
+  height: 50vh;
+}
+
 .cgs-dashboard-academic-report-container {
   width: 99%;
   overflow: hidden;
@@ -463,6 +471,12 @@ span#attendance-based-on-rollmarking-show {
   cursor: pointer;
 }
 
+.grades-his.modal-history-content,
+table#effort-history-table {
+  display: block;
+  overflow: auto;
+}
+
 .modal-report-my-student-content {
   text-align: center;
   width: -webkit-fit-content;
@@ -607,6 +621,15 @@ tr.reports-heading th {
   height: -webkit-fit-content;
   height: -moz-fit-content;
   height: fit-content;
+}
+
+@media (min-width: 768px) {
+  #page-report-mystudent-index #page.drawers .main-inner {
+    max-width: 100% !important;
+  }
+  #page-report-mystudent-view #page.drawers .main-inner {
+    max-width: 100% !important;
+  }
 }
 
 @media (max-width: 900px) {

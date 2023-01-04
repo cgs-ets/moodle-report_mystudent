@@ -122,17 +122,16 @@ function get_student_enrollments($userid, $idonly = true) {
     $now = new \DateTime("now", \core_date::get_server_timezone_object());
     $year = $now->format('Y');
 
-    $sql = "SELECT c.id , c.shortname as 'course name', c.idnumber 
+    $sql = "SELECT c.id , c.shortname as 'course name', c.idnumber
             FROM mdl_user_enrolments ue
             INNER JOIN mdl_enrol e ON ue.enrolid = e.id
             INNER JOIN mdl_course c ON c.id = e.courseid
-            WHERE userid = $userid and e.status = 0 and c.idnumber like '%$year%'"; //TODO: make it dinamic.
+            WHERE userid = $userid and e.status = 0 and c.idnumber like '%$year%'"; // TODO: make it dinamic.
 
+    $paramsarray = ['userid' => $userid, 'idnumber' => $year];
+    $r = $DB->get_records_sql($sql, $paramsarray);
 
-    $params_array = ['userid' => $userid, 'idnumber' => $year];
-    $r = $DB->get_records_sql($sql, $params_array);
-
-    $results = $idonly ? array_keys($r) :  $r;
+    $results = $idonly ? array_keys($r) : $r;
     return $results;
 }
 
@@ -142,7 +141,9 @@ function get_assessments_by_course($userid) {
     $result = [];
 
     if ($assessmentids != '') {
-        $sql = "SELECT grades.id as gradeid, u.id as userid, u.firstname, u.lastname, c.id as courseid, c.shortname as coursename, grades.assignment as assignmentid, assign.name as 'assignmentname', assign.duedate
+        $sql = "SELECT grades.id as gradeid, u.id as userid, u.firstname, u.lastname,
+                c.id as courseid, c.shortname as coursename, grades.assignment as assignmentid,
+                assign.name as 'assignmentname', assign.duedate
                 FROM {assign_grades} AS grades
                 JOIN {assign} as assign ON grades.assignment = assign.id
                 JOIN {user} as u ON grades.userid = u.id
@@ -154,7 +155,6 @@ function get_assessments_by_course($userid) {
         $result = $DB->get_records_sql($sql);
     }
 
-
     return $result;
 }
 
@@ -164,33 +164,36 @@ function get_assessment_submission_records($userid, $cid = null, $asid = null) {
     global $DB;
 
     $coursesid = $cid == null ? implode(',', get_student_enrollments($userid)) : $cid;
+    $results = false;
 
-    if ($asid == null) {
-        $sql = "SELECT id FROM mdl_assign WHERE course IN ($coursesid) ";
-        $assignids = implode(',', array_keys($DB->get_records_sql($sql)));
-    } else {
-        $assignids = $asid;
+    if ($coursesid != null) {
+
+        if ($asid == null) {
+            $sql = "SELECT id FROM mdl_assign WHERE course IN ($coursesid) ";
+            $assignids = implode(',', array_keys($DB->get_records_sql($sql)));
+        } else {
+            $assignids = $asid;
+        }
+        if (strlen($assignids) == 0) { // Moodle 4 throws an error.
+            return;
+        }
+
+        $sql = "SELECT * FROM {assign} AS assign
+                JOIN {assign_submission} AS asub
+                ON asub.assignment = assign.id
+                JOIN {files} as f  ON f.itemid = asub.id
+                WHERE f.userid = ?
+                AND f.filearea = ?
+                AND assign.id IN ($assignids)
+                AND assign.course IN ($coursesid)
+                AND asub.status = 'submitted'
+                AND f.contextid <> 1
+                ORDER BY asub.attemptnumber DESC, f.filename ASC";
+
+        $paramsarray = ['userid' => $userid, 'filearea' => 'submission_files'];
+
+        $results = $DB->get_records_sql($sql, $paramsarray);
     }
-
-    if(strlen($assignids) == 0) { // Moodle 4 throws an error.
-        return;
-    }
-
-    $sql = "SELECT * FROM {assign} AS assign
-            JOIN {assign_submission} AS asub
-            ON asub.assignment = assign.id
-            JOIN {files} as f  ON f.itemid = asub.id
-            WHERE f.userid = ? 
-            AND f.filearea = ? 
-            AND assign.id IN ($assignids) 
-            AND assign.course IN ($coursesid)
-            AND asub.status = 'submitted'
-            AND f.contextid <> 1
-            ORDER BY asub.attemptnumber DESC, f.filename ASC";
-
-    $params_array = ['userid' => $userid, 'filearea' => 'submission_files'];
-
-    $results = $DB->get_records_sql($sql, $params_array);
 
     return $results;
 }
@@ -201,9 +204,9 @@ function get_course_module($courseid, $assessids) {
     $sql = "SELECT cm.instance, cm.id as cmid FROM mdl_course_modules AS cm
     JOIN  mdl_modules AS m ON cm.module = m.id
     WHERE cm.course = ? AND cm.instance IN ($assessids) AND m.name = 'assign'; ";
-    $params_array = ['course' => $courseid];
+    $paramsarray = ['course' => $courseid];
 
-    $results = ($DB->get_records_sql($sql, $params_array));
+    $results = ($DB->get_records_sql($sql, $paramsarray));
 
     return $results;
 }
@@ -214,8 +217,8 @@ function get_cgs_connect_activities_context($userid) {
 
     foreach ($assessments as $assess) {
         $userassessment = new \stdClass();
-        $userassessment->coursename =  $assess->coursename;
-        $userassessment->assignmentid =  $assess->assignmentid;
+        $userassessment->coursename = $assess->coursename;
+        $userassessment->assignmentid = $assess->assignmentid;
         $cmids = get_course_module($assess->courseid, $assess->assignmentid);
         $cmid = $cmids[$assess->assignmentid]->cmid;
 
@@ -225,7 +228,7 @@ function get_cgs_connect_activities_context($userid) {
         $userassessment->assignmentnameurl = $assignmenturlparent;
         $userassessment->assignmentname = $assess->assignmentname;
 
-        $userassessment->duedate =  userdate($assess->duedate, get_string('strftimedatefullshort', 'core_langconfig'));
+        $userassessment->duedate = userdate($assess->duedate, get_string('strftimedatefullshort', 'core_langconfig'));
 
         $data['assign'][] = $userassessment;
     }

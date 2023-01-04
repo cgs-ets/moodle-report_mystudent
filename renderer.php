@@ -50,30 +50,30 @@ class report_mystudent_renderer extends plugin_renderer_base {
 
         profile_load_custom_fields($profileuser);
 
-        $isSenior = strpos(strtolower($profileuser->profile['CampusRoles']), 'senior');
+        $issenior = strpos(strtolower($profileuser->profile['CampusRoles']), 'senior');
         $data = new stdClass();
 
         $data->username = $profileuser->username;
         $data->userid = $id;
-        $data->campus = is_bool($isSenior) ? 'Primary' : 'Senior';
+        $data->campus = is_bool($issenior) ? 'Primary' : 'Senior';
 
-        $data->attsrc =  new moodle_url($CFG->wwwroot . '/report/mystudent/pix/attendance.png');
-        $data->att =  get_string('attendance', 'report_mystudent');
+        $data->attsrc = new moodle_url($CFG->wwwroot . '/report/mystudent/pix/attendance.png');
+        $data->att = get_string('attendance', 'report_mystudent');
         $data->atturl = new moodle_url('/report/mystudent/view.php', ['report' => 'attendance', 'id' => $id]);
 
-        $data->gestr =  new moodle_url($CFG->wwwroot . '/report/mystudent/pix/marking.png');
+        $data->gestr = new moodle_url($CFG->wwwroot . '/report/mystudent/pix/marking.png');
         $data->geurl = new moodle_url('/report/mystudent/view.php', ['report' => 'gradeandeffort', 'id' => $id]);
 
         $data->academic = new moodle_url($CFG->wwwroot . '/report/mystudent/pix/education.png');
-        $data->acc =  get_string('academicinfo', 'report_mystudent');
-        $data->accurl =  new moodle_url('/report/mystudent/view.php', ['report' => 'academic', 'id' => $id]);
+        $data->acc = get_string('academicinfo', 'report_mystudent');
+        $data->accurl = new moodle_url('/report/mystudent/view.php', ['report' => 'academic', 'id' => $id]);
 
         $data->naplan = new moodle_url($CFG->wwwroot . '/report/mystudent/pix/naplogo.jpg');
         $data->nap = get_string('naplan', 'report_mystudent');
         $data->napurl = new moodle_url('/report/mystudent/view.php', ['report' => 'naplan', 'id' => $id]);
 
         $data->currentyear = date("Y");
-        
+
         echo $this->render_from_template('report_mystudent/cgsdashboard', $data);
     }
 
@@ -81,18 +81,18 @@ class report_mystudent_renderer extends plugin_renderer_base {
         global $DB;
 
         $profileuser = $DB->get_record('user', ['id' => $id]);
-        $data =  get_data($profileuser);
+        $data = get_data($profileuser);
 
         echo  $this->render_from_template('report_mystudent/attendance/main', $data);
     }
 
-    // Collect the data for: Grade report, grade and effort history and assignments
+    // Collect the data for: Grade report, grade and effort history and assignments.
 
     public function report_academic($studentid, $currentuserid) {
         global $DB, $USER;
 
         $ids = [$studentid, $currentuserid];
-        
+
         list($insql, $inparams) = $DB->get_in_or_equal($ids);
         $sql = "SELECT id, username FROM {user} WHERE id $insql";
 
@@ -106,21 +106,20 @@ class report_mystudent_renderer extends plugin_renderer_base {
             $data = get_template_context($users[$studentid]->username, $users[$currentuserid]->username);
         }
 
-        $data['noreports']= count($data) == 0;
-       
+        $data['noreports'] = count($data) == 0;
+
         $assessdata = get_assign_template_context($users[$studentid]->username);
-        $extras->noassesssumary =  count($assessdata) == 0;
+        $extras->noassesssumary = count($assessdata) == 0;
         $gradesandeffortdata = get_templates_contexts($studentid);
         $cgsactivity = get_cgs_connect_activities_context($studentid);
-        $extras->noassesssumary =  count($cgsactivity) == 0;
-       
+        $extras->noassesssumary = count($cgsactivity) == 0;
+
         $data = array_merge($data, $gradesandeffortdata, $assessdata, $cgsactivity);
 
-        $data['noassesssumary']= count($assessdata) == 0;
-        $data['noconnectassess']=  count($cgsactivity) == 0;
-       
-        
+        $data['noassesssumary'] = count($assessdata) == 0;
+        $data['noconnectassess'] = count($cgsactivity) == 0;
+
         echo $this->render_from_template('report_mystudent/academic/academic_main', $data);
     }
-    
+
 }

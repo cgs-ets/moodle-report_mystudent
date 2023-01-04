@@ -19,6 +19,10 @@ $breakpoints: (phone: 640px,
     border-radius: 100%;
 }
 
+
+.report_mystudent  .pagelayout-standard #page.drawers .main-inner, body.limitedwidth #page.drawers .main-inner {
+    max-width: 100%!important;
+}
 @-webkit-keyframes rotation {
     from {
         -webkit-transform: rotate(0deg);
@@ -284,6 +288,10 @@ span#attendance-based-on-rollmarking-show {
     }
 }
 
+.chart {
+    height: 50vh;
+}
+
 .cgs-dashboard-academic-report-container {
     width: 99%;
     // height: 35vh;
@@ -309,7 +317,7 @@ span#attendance-based-on-rollmarking-show {
         max-height: 25px;
         cursor: pointer;
     }
-    
+
 }
 #reports-table  thead  th{
     background-color: #005892;
@@ -470,6 +478,13 @@ span#attendance-based-on-rollmarking-show {
     cursor: pointer;
 }
 
+// To keep the table within the modal
+.grades-his.modal-history-content,
+table#effort-history-table {
+    display: block;
+    overflow: auto;
+}
+
 // NAPLAN
 
 .modal-report-my-student-content {
@@ -628,6 +643,16 @@ tr.reports-heading {
     }
 }
 
+@media (min-width: 768px) {
+
+    #page-report-mystudent-index #page.drawers .main-inner {
+        max-width: 100% !important;
+    }
+
+    #page-report-mystudent-view #page.drawers .main-inner {
+        max-width: 100% !important;
+    }
+}
 
 @media (max-width: 900px) {
     .cgs-dashboard-academic-report-container {
@@ -655,3 +680,4 @@ tr.reports-heading {
         width: inherit;
     }
 }
+

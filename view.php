@@ -27,9 +27,9 @@ require_once($CFG->libdir . '/adminlib.php');
 require_once('lib.php');
 
 $id         = required_param('id', PARAM_INT); // Userid.
-$report     = optional_param('report','' ,PARAM_TEXT); // Type of report.
-$course     = optional_param('course', 0 ,PARAM_INT);
-$assignment = optional_param('assignment', 0 ,PARAM_INT);
+$report     = optional_param('report', '' , PARAM_TEXT); // Type of report.
+$course     = optional_param('course', 0 , PARAM_INT);
+$assignment = optional_param('assignment', 0 , PARAM_INT);
 
 require_login();
 
@@ -53,7 +53,7 @@ if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
 }
 $PAGE->set_url('/report/mystudent/view.php', array('id' => $id));
 
-$sectionames =  [
+$sectionames = [
     'attendance' => 'Attendance',
     'naplan' => 'NAPLAN',
     'gradeandeffort' => 'Grades and effort',
@@ -91,7 +91,7 @@ switch ($report) {
     case 'attendance':
         $renderer->report_attendance($id);
         break;
-    
+
     case 'academic':
         $renderer->report_academic($id, $USER->id);
         break;
@@ -99,7 +99,7 @@ switch ($report) {
         $renderer->report_rubric($id, $assignment, $course);
         break;
     default:
-        # code...
+        // code...
         break;
 }
 
