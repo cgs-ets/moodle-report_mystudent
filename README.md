@@ -2,7 +2,7 @@
 
 Displays a student's dashboard
 
-This plugin collects information form several resources and displays it in a friendly manner.
+This plugin collects information form several sources and displays it in a friendly manner.
 
 ## Installing via uploaded ZIP file ##
 
