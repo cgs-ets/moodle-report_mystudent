@@ -25,7 +25,6 @@ along with Moodle. If not, see
    <div class = "cgs-dashboard-academic-report-container">
       <h3>Academic reports</h3>
             <input type="text" id="searchReportInput"  placeholder="Search for year..">
-            <br><br>
         {{^noreports}}
             <table id = "reports-table" class="cgs-dashboard-gandeffort-table table-wrapper-scroll-y my-custom-scrollbar" >
                 <thead>
@@ -39,7 +38,7 @@ along with Moodle. If not, see
                     {{#reports}}
                     <tr >
                     <td class="view-report">{{description}}</td>
-                    <td class="text-center view-report"> 
+                    <td class="text-center view-report">
                         <img data-tdss="{{tdocumentsseq}}" class ="file-pdf" src="{{icon}}" alt="view report">
                     </td>
                     <td>{{documentcreateddate}}</td>
@@ -50,7 +49,7 @@ along with Moodle. If not, see
         {{/noreports}}
 
         {{#noreports}} Data not available {{/noreports}}
-      
+
    </div>
     <div class = "cgs-grade-main-container">
         <div class = "cgs-grade-history-container">
@@ -60,26 +59,25 @@ along with Moodle. If not, see
                 <br>
                 <div class='spinner-border  text-primary' id="grade-history-tb" hidden>
                 <span class="sr-only">Loading...</span>
-                </div>        
+                </div>
                 <div data-region="grade-history-table"></div>
             </div>
         </div>
     </div>
-    
+
     <div class = "cgs-effort-main-container">
         <div class = "cgs-effort-history-container">
             <div class = "effort-his">
                 <h3 class = "history-title">Effort history</h3><span><i class="fa fa-external-link fa-lg pop-up-history pop-up-effort" aria-hidden="true" title = "Expand" disabled></i></span>
                 <input type="text" id="searchByClassEffortInput"  placeholder="Search for class..">
-                <br><br>
                 <div class='spinner-border  text-primary' id="effort-history-tb" hidden>
                 <span class="sr-only">Loading...</span>
-                </div>        
+                </div>
                 <div data-region="effort-history-table"></div>
             </div>
         </div>
     </div>
-    {{^primary}} 
+    {{^primary}}
         <div class = "cgs-assignments-container">
             <div>
                 <h3 >{{#str}} assig_report, report_mystudent {{/str}}</h3>
