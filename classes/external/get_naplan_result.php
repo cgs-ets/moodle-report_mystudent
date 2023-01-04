@@ -46,7 +46,7 @@ trait get_naplan_result {
      * @return external_function_parameters
      */
 
-    public static  function get_naplan_result_parameters() {
+    public static function get_naplan_result_parameters() {
         return new external_function_parameters(
             array(
                 'username' => new external_value(PARAM_RAW, 'student username'),
@@ -63,7 +63,7 @@ trait get_naplan_result {
         $context = \context_user::instance($USER->id);
 
         self::validate_context($context);
-        //Parameters validation
+        // Parameters validation.
         self::validate_parameters(self::get_naplan_result_parameters(), array('username' => $username));
 
         // Get the context for the grade history table template.
@@ -81,7 +81,7 @@ trait get_naplan_result {
      */
     public static function get_naplan_result_returns() {
         return new external_single_structure(array(
-            'result' =>  new external_value(PARAM_RAW, 'JSON with the info to display in the graph'),
+            'result' => new external_value(PARAM_RAW, 'JSON with the info to display in the graph'),
         ));
     }
 }

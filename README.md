@@ -4,6 +4,26 @@ Displays a student's dashboard
 
 This plugin collects information form several sources and displays it in a friendly manner.
 
+ #### Main page ####
+![](/screenshots/main.JPG)
+
+ #### Academic page ####
+![](/screenshots/AcademicMain.png)
+
+#### Effort History Modal ####
+![](/screenshots/EffortHistoryModal.png)
+
+#### Grades History Modal ####
+![](/screenshots/GradesHistoryModal.JPG)
+
+#### Search by year/subject ####
+![](/screenshots/Search.png)
+
+#### NAPLAN modal ####
+![](/screenshots/NaplanModal.JPG)
+
+
+
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >

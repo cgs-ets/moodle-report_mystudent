@@ -45,7 +45,7 @@ function get_template_contexts($username) {
     ];
     $backgroundcolor = [
         'Year 3' => $config->bcyear3,
-        'Year 5' =>  $config->bcyear5,
+        'Year 5' => $config->bcyear5,
         'Year 7' => $config->bcyear7,
         'Year 9' => $config->bcyear9
     ];
@@ -63,7 +63,7 @@ function get_template_contexts($username) {
 
         $dataset = new \stdClass();
         $dataset->label = $result->testareadescription;
-        $dataset->testresultdescription =  $result->testresultdescription;
+        $dataset->testresultdescription = $result->testresultdescription;
         $dataset->year = $result->testleveldescription;
         $datasets[$result->testleveldescription][] = $dataset;
     }
@@ -72,12 +72,13 @@ function get_template_contexts($username) {
         return;
     }
 
-
     $datasets['labels'] = array_unique($datasets['labels']); // Remove duplicates.
     $resultsperyear = [];
 
     foreach ($datasets as $i => $dataset) {
-        if ($i == 'labels') continue;
+        if ($i == 'labels') {
+            continue;
+        }
         $datatorender = new \stdClass();
         $datatorender->label = $i;
         $datatorender->results = [];
@@ -110,8 +111,8 @@ function get_template_contexts($username) {
     $data = [
         'years' => $yearlabels,
         'testarea' => $summaries,
-        'hasdata' => !empty($summaries), 
-        'results' => json_encode($graphdata), 
+        'hasdata' => !empty($summaries),
+        'results' => json_encode($graphdata),
         'naplanscale' => 'https://www.nap.edu.au/_resources/common_scales_image_file.png'
     ];
 
@@ -119,7 +120,7 @@ function get_template_contexts($username) {
 }
 
 /**
- * Call to the SP 
+ * Call to the SP
  */
 function get_naplan_results($username) {
 
@@ -128,10 +129,10 @@ function get_naplan_results($username) {
         $config = get_config('report_mystudent');
 
         // Last parameter (external = true) means we are not connecting to a Moodle database.
-        $externalDB = \moodle_database::get_driver_instance($config->dbtypenaplan, 'native', true);
+        $externaldb = \moodle_database::get_driver_instance($config->dbtypenaplan, 'native', true);
 
         // Connect to external DB
-        $externalDB->connect($config->dbhostnaplan, $config->dbusernaplan, $config->dbpassnaplan, $config->dbnamenaplan, '');
+        $externaldb->connect($config->dbhostnaplan, $config->dbusernaplan, $config->dbpassnaplan, $config->dbnamenaplan, '');
 
         $sql = 'EXEC ' . $config->dbspnaplanresult . ' :id';
 
@@ -139,60 +140,10 @@ function get_naplan_results($username) {
             'id' => $username,
         );
 
-        $naplanresults = $externalDB->get_records_sql($sql, $params);
+        $naplanresults = $externaldb->get_records_sql($sql, $params);
 
         return $naplanresults;
     } catch (\Exception $ex) {
         throw $ex;
     }
 }
-
-
-// Parent view of own child's activity functionality
-// function can_view_on_profile() { // TODO: USe the new one
-//     global $DB, $USER, $PAGE;
-
-//     $config = get_config('report_mystudent');
-//     if ($PAGE->url->get_path() ==  $config->profileurl) {
-//         // Admin is allowed.
-//         $profileuser = $DB->get_record('user', ['id' => $PAGE->url->get_param('id')]);
-
-//         if (is_siteadmin($USER) && $profileuser->username != $USER->username) {
-//             return true;
-//         }
-
-//         // Students are allowed to see timetables in their own profiles.
-//         if ($profileuser->username == $USER->username && !is_siteadmin($USER)) {
-//             return true;
-//         }
-
-//         // Parents are allowed to view timetables in their mentee profiles.
-//         $mentorrole = $DB->get_record('role', array('shortname' => 'parent'));
-
-//         if ($mentorrole) {
-
-//             $sql = "SELECT ra.*, r.name, r.shortname
-//                 FROM {role_assignments} ra
-//                 INNER JOIN {role} r ON ra.roleid = r.id
-//                 INNER JOIN {user} u ON ra.userid = u.id
-//                 WHERE ra.userid = ?
-//                 AND ra.roleid = ?
-//                 AND ra.contextid IN (SELECT c.id
-//                     FROM {context} c
-//                     WHERE c.contextlevel = ?
-//                     AND c.instanceid = ?)";
-//             $params = array(
-//                 $USER->id, //Where current user
-//                 $mentorrole->id, // is a mentor
-//                 CONTEXT_USER,
-//                 $profileuser->id, // of the prfile user
-//             );
-//             $mentor = $DB->get_records_sql($sql, $params);
-//             if (!empty($mentor)) {
-//                 return true;
-//             }
-//         }
-//     }
-
-//     return false;
-// }

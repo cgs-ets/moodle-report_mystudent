@@ -54,6 +54,7 @@ define(['jquery', 'report_mystudent/chart', 'core/ajax', 'core/modal_factory'], 
             },
 
             fail: function (reason) {
+                console.log(reason);
                 // remove spinner
                 document.querySelector('.card-body-naplan').firstElementChild.style.display = "none"
                 document.querySelector('.card-top-naplan').firstElementChild.style.display = "none"
