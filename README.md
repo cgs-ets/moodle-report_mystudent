@@ -1,8 +1,8 @@
 # My student #
 
-TODO Describe the plugin shortly here.
+Displays a student's dashboard
 
-TODO Provide more detailed description here.
+This plugin collects information form several resources and displays it in a friendly manner.
 
 ## Installing via uploaded ZIP file ##
 
