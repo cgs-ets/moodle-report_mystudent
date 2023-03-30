@@ -17,9 +17,9 @@
 /**
  *  Web service to get grade history/effort data.
  *
- * @package   attendance_report
+ * @package   assignmentsquizzes_report
  * @category
- * @copyright 2022 Veronica Bermegui
+ * @copyright 2023 Veronica Bermegui
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -31,26 +31,25 @@ use external_function_parameters;
 use external_value;
 use external_single_structure;
 
-use function report_mystudent\attendance\get_student_attendance_based_on_rollmarking;
-
+use function report_mystudent\assignments_report\get_cgs_connect_activities_context;
+require_once($CFG->dirroot . '/report/mystudent/classes/assignmentsmanager.php');
 require_once($CFG->libdir . '/externallib.php');
-require_once($CFG->dirroot . '/report/mystudent/classes/attendancemanager.php');
 
 /**
- * Trait implementing the external function block_attendance_report
+ * Trait implementing the external function get_moodle_activities
  */
-trait get_attendance_rollmarking_context {
+trait get_moodle_activities {
+
 
     /**
      * Returns description of method parameters
      * @return external_function_parameters
      */
 
-    public static  function get_attendance_rollmarking_context_parameters() {
+    public static function get_moodle_activities_parameters() {
         return new external_function_parameters(
             array(
-                'username' => new external_value(PARAM_RAW, 'Student username'),
-                'campus' => new external_value(PARAM_RAW, 'Primary or Senior'),
+                'userid' => new external_value(PARAM_RAW, 'student id')
             )
         );
     }
@@ -58,29 +57,27 @@ trait get_attendance_rollmarking_context {
     /**
      * Return context.
      */
-    public static function get_attendance_rollmarking_context($username, $campus) {
+    public static function get_moodle_activities($userid) {
         global $USER, $PAGE;
 
         $context = \context_user::instance($USER->id);
 
         self::validate_context($context);
-        //Parameters validation
-        self::validate_parameters(self::get_attendance_rollmarking_context_parameters(), array('username' => $username, 'campus' => $campus));
+        // Parameters validation.
+        self::validate_parameters(self::get_moodle_activities_parameters(), array('userid' => $userid));
 
         // Get the context for the template.
-        $ctx = new \stdClass();
-        $ctx->senior = ($campus == 'Senior');
-        $ctx->days = get_student_attendance_based_on_rollmarking($username, $campus);
+        $ctx = get_cgs_connect_activities_context($userid);
 
-        $renderer = $PAGE->get_renderer('report_mystudent');
+        // if (empty($ctx)) {
+        //     $html = get_string('nodataavailable', 'report_mystudent');
+        // } else {
+        //     $output = $PAGE->get_renderer('core');
+        //     $html = $output->render_from_template('report_mystudent/academic/academic_cgs_activities', $ctx);
+        // }
 
-        if ($campus == 'Senior') {
-            $html = $renderer->render_from_template('report_mystudent/attendance/attendance_rollmarking_senior', $ctx);
-        } else {
-            $html = $renderer->render_from_template('report_mystudent/attendance/attendance_rollmarking_primary', $ctx);
-        }
         return array(
-            'html' => $html,
+            'ctx' => json_encode($ctx),
         );
     }
 
@@ -88,9 +85,9 @@ trait get_attendance_rollmarking_context {
      * Describes the structure of the function return value.
      * @return external_single_structures
      */
-    public static function get_attendance_rollmarking_context_returns() {
+    public static function get_moodle_activities_returns() {
         return new external_single_structure(array(
-            'html' =>  new external_value(PARAM_RAW, 'HTML with the Connect attendance based on rollmarking table context'),
+            'ctx' => new external_value(PARAM_RAW, 'data to render in template'),
         ));
     }
 }
