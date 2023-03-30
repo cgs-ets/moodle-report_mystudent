@@ -25,7 +25,7 @@ along with Moodle. If not, see
          {{^noclassesdata}}
          {{> report_mystudent/attendance/attendance_by_class}}
          {{/noclassesdata}}
-         {{#noclassesdata}}    
+         {{#noclassesdata}}
          {{> report_mystudent/attendance/attendance_no_data}}
          {{/noclassesdata}}
       </div>
@@ -33,10 +33,10 @@ along with Moodle. If not, see
    </div>
 </div>
 
-{{^hidelink}}
-{{^isparent}}
+{{! {{^hidelink}}
+{{! {{^isparent}}
     <div id="rollmarking-container"  data-username="{{username}}"  data-campus ='{{campus}}'>
-    
+
     <a href="#" data-toggle="collapse" data-target="#attendance-based-on-rollmarking"
         aria-expanded="false" aria-controls="attendance-based-on-rollmarking"
         class="attendance-rollmarking">
@@ -54,8 +54,8 @@ along with Moodle. If not, see
         </div>
         </div>
     </div>
-{{/isparent}}
-{{/hidelink}}
+{{! {{/isparent}}
+{{! {{/hidelink}}
 
 {{#js}}
 require(['report_mystudent/attendance'], function(Attendance) {

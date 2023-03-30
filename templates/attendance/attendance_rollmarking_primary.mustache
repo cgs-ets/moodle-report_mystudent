@@ -15,7 +15,7 @@ You should have received a copy of the GNU General Public License
 along with Moodle. If not, see
 <http: //www.gnu.org/licenses />.
 
-@package block_attendance_report
+@package report_mystudent
 @copyright 2021 Veronica Bermegui
 @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
 
@@ -23,22 +23,22 @@ along with Moodle. If not, see
 
 <table>
   <tr>
-    <td class="att-mark-absent">{{#str}} markedabset, block_attendance_report{{/str}}</td>
-    <td class="att-mark-present">{{#str}} markedpresent, block_attendance_report{{/str}}</td>
-    <td class="att-norolltaken">{{#str}} norolltaken, block_attendance_report{{/str}}</td>
-    <td class="att-mark-exc">{{#str}} studentexcursion, block_attendance_report{{/str}}</td>
-  </tr>  
+    <td class="att-mark-absent">{{#str}} markedabset, report_mystudent{{/str}}</td>
+    <td class="att-mark-present">{{#str}} markedpresent, report_mystudent{{/str}}</td>
+    <td class="att-norolltaken">{{#str}} norolltaken, report_mystudent{{/str}}</td>
+    <td class="att-mark-exc">{{#str}} studentexcursion, report_mystudent{{/str}}</td>
+  </tr>
 </table>
 <br>
 <div class="clarification">
-  <i>{{#str}} clarification, block_attendance_report{{/str}}</i>
+  <i>{{#str}} clarification, report_mystudent{{/str}}</i>
 </div>
 <br>
 
 <table id="rollmarking-primary" class="table table-striped">
   <thead>
     <tr>
-      <th scope="col">Attendance Date</th>    
+      <th scope="col">Attendance Date</th>
       <th colspan ="9" >Sessions</th>
     </tr>
   </thead>
@@ -49,7 +49,7 @@ along with Moodle. If not, see
       <td colspan="2"> 3-4</td>
       <td colspan="3"> 5-6</td>
     </tr>
-    
+
       {{#days}}
       {{#months}}
       {{#details}}
@@ -62,12 +62,12 @@ along with Moodle. If not, see
       {{^rolltaken}}<td class="att-norolltaken"></td> {{/rolltaken}}
       {{#rolltaken}}{{^attendedflag}}{{^absencertypecode}}<td class="att-mark-absent"></td>{{/absencertypecode}}{{/attendedflag}} {{/rolltaken}}
       {{#rolltaken}}{{^attendedflag}}{{#absencertypecode}}<td class="att-mark-exc"></td>{{/absencertypecode}}{{/attendedflag}} {{/rolltaken}}
-      {{/descriptions}}    
-    {{/classdescription}}   
+      {{/descriptions}}
+    {{/classdescription}}
     </tr>
     {{/det}}
     {{/details}}
-    {{/months}} 
+    {{/months}}
     {{/days}}
   </tbody>
 </table>

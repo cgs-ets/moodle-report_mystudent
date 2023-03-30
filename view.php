@@ -51,6 +51,7 @@ if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
     echo $OUTPUT->footer();
     exit;
 }
+
 $PAGE->set_url('/report/mystudent/view.php', array('id' => $id));
 
 $sectionames = [
@@ -61,13 +62,17 @@ $sectionames = [
     'rubric' => 'Assessment Rubric'
 ];
 
+if (!empty($id)) {
+    $user = core_user::get_user($id);
+    $PAGE->navigation->extend_for_user($user);
+}
 
 $navigationinfo = array(
-    'name' => $sectionames[$report],
+    'name' => "Student's CGS dashboard/$sectionames[$report]",
     'url' => new moodle_url('/report/mystudent/view.php', array('id' => $id))
 );
 
-$PAGE->add_report_nodes($USER->id, $navigationinfo);
+$PAGE->add_report_nodes($user->id, $navigationinfo);
 
 $userrec = $DB->get_record('user', array('id' => $id));
 $heading = $USER->id == $id ? get_string('mydashboard', 'report_mystudent') : get_string('studentdashboard', 'report_mystudent', $userrec);

@@ -27,12 +27,6 @@ use report_mystudent\mystudentmanager;
 
 defined('MOODLE_INTERNAL') || die;
 
-function report_report_mystudent_extend_navigation_user($navigation, $user, $course) {
-
-    $url = new moodle_url('/report/mystudent/index.php', array('id' => $user->id, 'course' => $course->id));
-    $navigation->add(get_string('heading', 'report_mystudent'), $url);
-}
-
 /**
  * Add nodes to myprofile page.
  *
@@ -43,6 +37,7 @@ function report_report_mystudent_extend_navigation_user($navigation, $user, $cou
  *
  * @return bool
  */
+
 function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree $tree, $user, $iscurrentuser) {
     global $USER;
 
@@ -62,23 +57,21 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
 
     $isuserprofilestaff = preg_match('/(staff)/i', $userprofileroles);
     $isuserprofileparent = preg_match('/(parents)/i', $userprofileroles);
-    
-    //Check the student is senior
 
-    // show the dashboard block
+    // Show the dashboard block.
     $category = new core_user\output\myprofile\category('mystudent', get_string('reportname', 'report_mystudent'), 'contact');
     $tree->add_category($category);
     $dburl = new moodle_url('/report/mystudent/index.php', ['id' => $user->id]);
 
-    $localnode =  new core_user\output\myprofile\node('mystudent', 'mystudentdashboard', get_string('studentdashboard', 'report_mystudent', $user), null, $dburl, '');
+    $localnode = new core_user\output\myprofile\node('mystudent', 'mystudentdashboard', get_string('studentdashboard', 'report_mystudent', $user), null, $dburl, '');
     $manager = new mystudentmanager();
 
     switch ($iscurrentuser) {
-        case false: // Im in a profile that is not mine
+        case false: // Im in a profile that is not mine.
             if ($isuserprofilestaff || $isuserprofileparent) {
                 return;
             }
-            if (($isstaff && $isparent) || ($isstaff && !$isparent)) { // staff that is also a parent can see their child and other children profile
+            if (($isstaff && $isparent) || ($isstaff && !$isparent)) { // Staff that is also a parent can see their child and other children profile.
                 $tree->add_node($localnode);
             } else if (!$isstaff && $isparent) {
                 // Parents can only see their childs profile.
@@ -90,7 +83,7 @@ function report_mystudent_myprofile_navigation(\core_user\output\myprofile\tree 
         case true:  // Only students can see their dashboard.
 
             if ($isstudent && $USER->id == $user->id) {
-                $localnode =  new core_user\output\myprofile\node('mystudent', 'mystudentdashboard', get_string('mydashboard', 'report_mystudent', $user), null, $dburl, '');
+                $localnode = new core_user\output\myprofile\node('mystudent', 'mystudentdashboard', get_string('mydashboard', 'report_mystudent', $user), null, $dburl, '');
                 $tree->add_node($localnode);
             }
             break;
@@ -116,7 +109,7 @@ function get_mentor($profileuserid) {
                 WHERE c.contextlevel = ?
                 AND c.instanceid = ?)";
         $params = array(
-            $USER->id, //Where current user
+            $USER->id, // Where current user
             $mentorrole->id, // is a mentor
             CONTEXT_USER,
             $profileuserid, // of the prfile user
@@ -157,7 +150,7 @@ function report_mystudent_pluginfile($course, $cm, $context, $filearea, $args, $
 
     // Check the relevant capabilities - these may vary depending on the filearea being accessed.
     // if (!has_capability('mod/MYSTUDENT:view', $context)) {
-    //     return false;
+    // return false;
     // }
 
     // Leave this line out if you set the itemid to null in make_pluginfile_url (set $itemid to 0 instead).
@@ -182,6 +175,6 @@ function report_mystudent_pluginfile($course, $cm, $context, $filearea, $args, $
         return false; // The file does not exist.
     }
 
-    // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering. 
+    // We can now send the file back to the browser - in this case with a cache lifetime of 1 day and no filtering.
     send_stored_file($file, 86400, 0, $forcedownload, $options);
 }

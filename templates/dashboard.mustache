@@ -1,0 +1,65 @@
+  <nav id = "cgs-dashboard-nav">
+    <div class="sidebar-top">
+      <span class="shrink-btn">
+        <i class='fa fa-chevron-left' title = "Collapse"></i>
+      </span>
+
+      {{! <h3 class="cgs-dashboard-hide">CGS</h3> }}
+    </div>
+
+    {{! <div class="search">
+      <i class='bx bx-search'></i>
+      <input type="text" class="cgs-dashboard-hide" placeholder="Quick Search ...">
+    </div> }}
+    <br>
+
+    <div class="sidebar-links">
+      <ul>
+        <div class="active-tab"></div>
+        <li class="tooltip-element" data-tooltip="0">
+          <a href="#" class="active" data-active="0">
+            <div class="cgs-dashboard-icon">
+              <i class='fa fa-dashboard'></i>
+              <i class='fa fa-dashboard'></i>
+            </div>
+            <span class="link cgs-dashboard-hide">Dashboard</span>
+          </a>
+        </li>
+        <li class="tooltip-element" data-tooltip="1">
+          <a href="#" data-active="1" id = "cgs-dashboard-assessment-link">
+            <div class="cgs-dashboard-icon">
+              <i class='fa fa-book'></i>
+              <i class='fa fa-book'></i>
+            </div>
+            <span class="link cgs-dashboard-hide">Assessments</span>
+          </a>
+        </li>
+        <li class="tooltip-element" data-tooltip="2">
+          <a href="#" data-active="2">
+            <div class="cgs-dashboard-icon">
+              <i class='fa fa-file-pdf-o'></i>
+              <i class='fa fa-file-pdf-o'></i>
+            </div>
+            <span class="link cgs-dashboard-hide">Reports</span>
+          </a>
+        </li>
+        <li class="tooltip-element" data-tooltip="3">
+          <a href="#" data-active="3">
+            <div class="cgs-dashboard-icon">
+              <i class='fa fa-history'></i>
+              <i class='fa fa-history'></i>
+            </div>
+            <span class="link cgs-dashboard-hide">Historical data</span>
+          </a>
+        </li>
+        <div class="tooltip">
+          <span class="show">Dashboard</span>
+          <span>Assessments</span>
+          <span>Reports</span>
+          <span>Historical</span>
+        </div>
+      </ul>
+    </div>
+  </nav>
+
+  {{> report_mystudent/maindashboardsection}}

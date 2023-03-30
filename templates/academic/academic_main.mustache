@@ -88,14 +88,16 @@ along with Moodle. If not, see
             </div>
             <br>
             <div>
+            <div hidden>
             <h3>CGS Connect activity</h3>
                 {{^noconnectassess}}
                     {{> report_mystudent/academic/academic_cgs_activities}}
                 {{/noconnectassess}}
 
                 {{#noconnectassess}} Data not available{{/noconnectassess}}
-
             </div>
+            </div>
+
         </div>
     {{/primary}}
 </div>

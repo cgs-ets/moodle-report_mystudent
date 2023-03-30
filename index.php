@@ -32,15 +32,20 @@ $id = optional_param('id', 0, PARAM_INT); // User id.
 
 $context = context_system::instance();
 $PAGE->set_context($context);
-
 $PAGE->set_url('/report/mystudent/index.php', array('id' => $id));
+
 $userrec = $DB->get_record('user', array('id' => $id));
 $navigationinfo = array(
     'name' => get_string('reportname', 'report_mystudent'),
     'url' => new moodle_url('/report/mystudent/index.php', array('id' => $id))
 );
 
-$PAGE->add_report_nodes($USER->id, $navigationinfo);
+if (!empty($id)) {
+    $user = core_user::get_user($id);
+    $PAGE->navigation->extend_for_user($user);
+}
+
+$PAGE->add_report_nodes($user->id, $navigationinfo);
 // Now set the heading.
 if (empty(get_mentor($id)) && !is_siteadmin($USER) && $id != $USER->id) {
 

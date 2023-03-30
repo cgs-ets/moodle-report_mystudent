@@ -49,17 +49,17 @@ function get_attendance_by_term($profileuser) {
         $config = get_config('report_mystudent');
 
         // Last parameter (external = true) means we are not connecting to a Moodle database.
-        $externalDB = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
+        $externaldb = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
 
         // Connect to external DB
-        $externalDB->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
+        $externaldb->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
 
         $sql = 'EXEC ' . $config->dbattbyterm . ' :id';
 
         $params = array(
             'id' => $profileuser->username,
         );
-        $attendancedata = $externalDB->get_records_sql($sql, $params);
+        $attendancedata = $externaldb->get_records_sql($sql, $params);
 
         return $attendancedata;
     } catch (\Exception $ex) {
@@ -87,10 +87,10 @@ function get_attendance_by_class($profileuser) {
     try {
         $config = get_config('report_mystudent');
 
-        $externalDB = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
+        $externaldb = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
 
         // Connect to external DB.
-        $externalDB->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
+        $externaldb->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
 
         $sql = 'EXEC ' . $config->dbattbyclass . ' :id';
 
@@ -98,7 +98,7 @@ function get_attendance_by_class($profileuser) {
             'id' => $profileuser->username,
         );
 
-        $attendancedata = $externalDB->get_records_sql($sql, $params);
+        $attendancedata = $externaldb->get_records_sql($sql, $params);
 
         return $attendancedata;
     } catch (\Exception $ex) {
@@ -112,25 +112,25 @@ function get_student_attendance_based_on_rollmarking($username, $campus) {
     try {
 
         $config = get_config('report_mystudent');
-        $externalDB = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
+        $externaldb = \moodle_database::get_driver_instance($config->dbtype, 'native', true);
 
         // Connect to external DB.
-        $externalDB->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
-        $sql = $campus == 'Senior' ? 'EXEC ' . $config->dbattbytermbyid . ' :id' :  'EXEC ' . $config->dbattbytermbyidprimary . ' :id';
+        $externaldb->connect($config->dbhost, $config->dbuser, $config->dbpass, $config->dbname, '');
+        $sql = $campus == 'Senior' ? 'EXEC ' . $config->dbattbytermbyid . ' :id' : 'EXEC ' . $config->dbattbytermbyidprimary . ' :id';
 
         $params = array(
             'id' => $username,
         );
 
-        $attendancedata = $externalDB->get_recordset_sql($sql, $params);
+        $attendancedata = $externaldb->get_recordset_sql($sql, $params);
 
         $monthsdata = [];
 
         foreach ($attendancedata as $data) {
 
-            $createDate = new \DateTime($data->attendancedate);
-            $day = $createDate->format("d/m/Y");
-            $month = $createDate->format("F");
+            $createdate = new \DateTime($data->attendancedate);
+            $day = $createdate->format("d/m/Y");
+            $month = $createdate->format("F");
             $swipedt = (new \DateTime($data->swipedt))->format('h:i A');
             $attendanceperiods[] = $data->attendanceperiod;
             $monthsdata['months'][$month . '_' . $day][$data->attendanceperiod] = [
@@ -144,9 +144,9 @@ function get_student_attendance_based_on_rollmarking($username, $campus) {
                 'latearrivaltime' => $data->latearrivaltime,
                 'month' => $month,
                 'classdescription' => $data->classdescription,
-                'perioddescription' => $data->description, // Periods can have different names. 
+                'perioddescription' => $data->description, // Periods can have different names.
                 'academicperiodtimefrom' => $data->academicperiodtimefrom,
-                'academicperiodtimeto' => $data->academicperiodtimeto, // For Primary 
+                'academicperiodtimeto' => $data->academicperiodtimeto, // For Primary.
                 'eventdate' => $data->eventdate,
                 'absencetypecode' => $data->absencetypecode,
                 'firstexcursionoverlapin'  => $data->firstexcur_overlapin,
@@ -192,7 +192,7 @@ function get_student_attendance_based_on_rollmarking_senior($monthsdata) {
 
                 $summary = new \stdClass();
                 $summary->description = $m['classdescription'];
-                $summary->attendedflag =  $m['attendedflag'];
+                $summary->attendedflag = $m['attendedflag'];
                 $summary->norolltaken = (is_null($m['attendedflag']) && is_null($m['latearrivalflag']));
                 $summary->latearrivalflag = !is_null($m['latearrivalflag']) && $m['latearrivalflag'] != 0;
                 $summary->latearrivaltime = $m['latearrivaltime'];
@@ -233,7 +233,7 @@ function get_student_attendance_based_on_rollmarking_senior_helper(&$daysdata) {
         $p[$date] = array_keys($periods);
     }
 
-    $pvalue = [1, 2, 3, 4, 5, 6];
+    $pvalue = [1, 2, 3, 4, 5, 6, 7];
     $pmissing = [];
 
     foreach ($p as $day => $period) {
@@ -251,7 +251,7 @@ function get_student_attendance_based_on_rollmarking_senior_helper(&$daysdata) {
                 'attendanceperiod' => $missing,
                 'ttclasscode' => '',
                 'housesignin' => '',
-                'nosignin' =>  null,
+                'nosignin' => null,
                 'attendedflag' => null,
                 'latearrivalflag' => null,
                 'month' => $month,
@@ -274,7 +274,7 @@ function get_student_attendance_based_on_rollmarking_primary($monthsdata, $atten
         foreach ($months as $key => $month) {
             $daydetails = new \stdClass();
             $classdesc = [];
-            $classrollnottaken = []; // Collect the classes where the roll is not taken.           
+            $classrollnottaken = []; // Collect the classes where the roll is not taken.
             $allperiods = [2, 3, 4, 5, 6, 7, 8];
             $countexcursion = 0;
             list($daydetails->month, $daydetails->attendancedate) = explode('_', $key);
@@ -283,28 +283,28 @@ function get_student_attendance_based_on_rollmarking_primary($monthsdata, $atten
                 $summary = new \stdClass();
                 $summary->description = $m['classdescription'];
                 $summary->period = $m['attendanceperiod'];
-                $summary->attendedflag =  $m['attendedflag'];
+                $summary->attendedflag = $m['attendedflag'];
                 $summary->rolltaken = !is_null($m['attendedflag']);
                 $summary->academicperiodtimefrom = date('H:i', strtotime($m['academicperiodtimefrom']));
                 $summary->academicperiodtimeto = date('H:i', strtotime($m['academicperiodtimeto']));
-                $summary->absencertypecode = ($m['absencetypecode'] == 'EXCUR') ? $m['absencetypecode'] : ''; //ATM only display excursion
+                $summary->absencertypecode = ($m['absencetypecode'] == 'EXCUR') ? $m['absencetypecode'] : ''; // ATM only display excursion
 
-                if (!is_null($m['attendedflag'])) { // Roll taken
+                if (!is_null($m['attendedflag'])) { // Roll taken.
                     $classdesc['descriptions'][$i] = $summary;
-                } else { // Roll not taken
+                } else { // Roll not taken.
 
-                    $classrollnottaken[$i] =  clone $summary; // Keep track of the state, as it comes from the DB.       
+                    $classrollnottaken[$i] = clone $summary; // Keep track of the state, as it comes from the DB.
 
                     if ($i > 2) { // Get the attendance state from the previous period.
-                        $lastperiod =   $classdesc['descriptions'][$i - 1];
-                    } else if ($i == 2) { // This means that in the period 2 when the rollmarking took place, there was no rollmark. 
-                        $lastperiod =   $classdesc['descriptions'][$i];
+                        $lastperiod = $classdesc['descriptions'][$i - 1];
+                    } else if ($i == 2) { // This means that in the period 2 when the rollmarking took place, there was no rollmark.
+                        $lastperiod = $classdesc['descriptions'][$i];
                     }
 
                     $summary->attendedflag = $lastperiod->attendedflag;
                     $summary->rolltaken = $lastperiod->rolltaken;
                     $summary->absencertypecode = $lastperiod->absencertypecode;
-                    $classdesc['descriptions'][$i] =  $summary;
+                    $classdesc['descriptions'][$i] = $summary;
                 }
             }
 
@@ -357,7 +357,7 @@ function get_student_attendance_based_on_rollmarking_primary_helper(&$daysdata, 
                 'attendanceperiod' => $missing,
                 'ttclasscode' => '',
                 'housesignin' => '',
-                'nosignin' =>  null,
+                'nosignin' => null,
                 'attendedflag' => null,
                 'latearrivalflag' => null,
                 'month' => $month,
@@ -410,8 +410,8 @@ function get_data(/*$instanceid,*/ $profileuser) {
     $noclassesdata = empty($terms);
 
     profile_load_custom_fields($profileuser);
-    $isSenior = strpos(strtolower($profileuser->profile['CampusRoles']), 'senior');
-  
+    $issenior = strpos(strtolower($profileuser->profile['CampusRoles']), 'senior');
+
     profile_load_custom_fields($USER);
     $result = [
         'terms' => $terms,
@@ -420,7 +420,7 @@ function get_data(/*$instanceid,*/ $profileuser) {
         'notermdata' => $notermdata,
         'noclassesdata' => $noclassesdata,
         'hidelink' => ($notermdata && $noclassesdata),
-        'campus' =>  is_bool($isSenior) ? 'Primary' : 'Senior',
+        'campus' => is_bool($issenior) ? 'Primary' : 'Senior',
         'username' => $profileuser->username,
         'isparent' => !is_siteadmin($USER) && !is_bool(strpos(strtolower($USER->profile['CampusRoles']), 'parents'))
 
@@ -435,7 +435,7 @@ function can_view_on_profile() {
     global $DB, $USER, $PAGE;
 
     $config = get_config('report_mystudent');
-    if ($PAGE->url->get_path() ==  $config->profileurl) {
+    if ($PAGE->url->get_path() == $config->profileurl) {
         $profileuser = $DB->get_record('user', ['id' => $PAGE->url->get_param('id')]);
         // Admin is allowed.
 
@@ -464,7 +464,7 @@ function can_view_on_profile() {
                     WHERE c.contextlevel = ?
                     AND c.instanceid = ?)";
             $params = array(
-                $USER->id, //Where current user
+                $USER->id, // Where current user
                 $mentorrole->id, // is a mentor
                 CONTEXT_USER,
                 $profileuser->id, // of the prfile user

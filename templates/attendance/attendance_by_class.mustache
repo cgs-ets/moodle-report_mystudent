@@ -23,10 +23,10 @@ along with Moodle. If not, see
 <table class="cgs-dashboard-attendance-table att-by-class">
    <thead>
       <tr>
-         <th>{{#str}} classdescription, block_attendance_report {{/str}}</th>
-          <th>{{#str}} percentageattendedforterm, block_attendance_report {{/str}}</th>
-         <th>{{#str}} arrivedlate, block_attendance_report {{/str}}</th>
-         <th>{{#str}} percentagearrivedlate, block_attendance_report {{/str}}</th>
+         <th>{{#str}} classdescription, report_mystudent {{/str}}</th>
+          <th>{{#str}} percentageattendedforterm, report_mystudent {{/str}}</th>
+         <th>{{#str}} arrivedlate, report_mystudent {{/str}}</th>
+         <th>{{#str}} percentagearrivedlate, report_mystudent {{/str}}</th>
       </tr>
    </thead>
    <tbody>
@@ -38,7 +38,7 @@ along with Moodle. If not, see
          {{^nooflateshow}} <td></td> {{/nooflateshow}}
          {{#nooflateshow}}<td>{{nooflateclasses}}</td>{{/nooflateshow}}
          <td>{{#islate}}{{percentagelate}}%{{/islate}}</td>
-         
+
       </tr>
       {{/classes}}
    </tbody>

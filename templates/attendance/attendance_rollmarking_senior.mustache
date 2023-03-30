@@ -29,10 +29,10 @@
   <br>
 <table class = "cgs-dashboard-attendance-table" >
   <thead>
-    <tr>      
+    <tr>
       <th scope="col">{{#str}} attendancedate, report_mystudent{{/str}}</th>
       <th scope="col">{{#str}} housesignin, report_mystudent{{/str}}</th>
-      <th colspan ="6" >{{#str}} periods, report_mystudent{{/str}}</th>
+      <th colspan ="7" >{{#str}} periods, report_mystudent{{/str}}</th>
     </tr>
   </thead>
   <tbody>
@@ -44,41 +44,42 @@
         <td>3</td>
         <td>4</td>
         <td>{{#str}}pastoral, report_mystudent {{/str}}</td>
-        <td>5</td>  
+        <td>5</td>
+        <td>6</td>
     </tr>
         {{#days}}
         {{#months}}
         {{#details}}
         {{#det}}
-    <tr> 
+    <tr>
         <td>{{attendancedate}} {{#firstexcursionoverlapin}}<i class="fa fa-info-circle" title="{{title}}"></i>{{/firstexcursionoverlapin}}</td>
         {{^late}}<td class="att-mark-present">{{housesignin}}</td>{{/late}}
         {{#nosignin}}<td class="att-mark-absent">{{#str}}nosignin, report_mystudent {{/str}}</td>{{/nosignin}}
         {{#classdescription}}
           {{#descriptions}}
-          
+
             {{#attendedflag}}{{^latearrivalflag}}  <td class="att-mark-present" > {{description}} </td> {{/latearrivalflag}}{{/attendedflag}}
-            
-            {{#attendedflag}} 
-              {{#latearrivalflag}} 
-            
+
+            {{#attendedflag}}
+              {{#latearrivalflag}}
+
                    <td  class="att-mark-present att-late" data-html="true" data-toggle="tooltip" data-placement="bottom" title ="  Arrived late: {{{latearrivaltime}}}">
                    {{description}} *
                   </td>
               {{/latearrivalflag}}
             {{/attendedflag}}
 
-            {{^attendedflag}} {{^norolltaken}} 
-                <td {{^cssclass}} class="att-mark-absent" {{/cssclass}} {{#cssclass}} class="{{cssclass}}"{{/cssclass}}>{{description}}</td> 
+            {{^attendedflag}} {{^norolltaken}}
+                <td {{^cssclass}} class="att-mark-absent" {{/cssclass}} {{#cssclass}} class="{{cssclass}}"{{/cssclass}}>{{description}}</td>
               {{/norolltaken}} {{/attendedflag}}
             {{^attendedflag}}{{#norolltaken}} <td class="att-norolltaken" >{{description}}</td> {{/norolltaken}}{{/attendedflag}}
-          {{/descriptions}}    
-        {{/classdescription}}          
+          {{/descriptions}}
+        {{/classdescription}}
     </tr>
         {{/det}}
         {{/details}}
-        {{/months}} 
+        {{/months}}
         {{/days}}
-   
+
   </tbody>
 </table>
